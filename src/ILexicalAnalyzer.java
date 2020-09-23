@@ -1,3 +1,3 @@
 public interface ILexicalAnalyzer {
-    Token nextToken();
+    Token nextToken() throws Exception;
 }
