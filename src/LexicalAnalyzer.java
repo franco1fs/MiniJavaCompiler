@@ -69,8 +69,8 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         tokensConversion.put("&&","Operador AND");
         tokensConversion.put("||","Operador OR");
         tokensConversion.put("=", "Asignacion");
-        tokensConversion.put("+=", "Asignacion Compuesta");
-        tokensConversion.put("-=", "Asignacion Compuesta");
+        tokensConversion.put("+=", "Asignacion Compuesta con +");
+        tokensConversion.put("-=", "Asignacion Compuesta con -");
     }
     private void updateLexeme(){
         lexeme = lexeme + currentChar;
@@ -264,7 +264,8 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             return state_literalInt();
         }
         else{
-            return new Token("Literal de tipo Integer",lexeme,lineNumber);
+
+            return new Token("Literal Integer",lexeme,lineNumber);
         }
     }
 
@@ -278,6 +279,10 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             updateLexeme();
             updateCurrentChar();
             throw new LexicalErrorException("Character mal formado, no se permite un caracter vacio '' ",lexeme,lineNumber);
+        }
+        else if(currentChar == '\n'){
+            updateLexeme();
+            throw new LexicalErrorException("Caracter mal formado",lexeme,lineNumber);
         }
         else{
             updateLexeme();
@@ -314,8 +319,8 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             throw new LexicalErrorException("Finalizo el archivo antes de cerrar el String",lexeme,lineNumber);
         }
         else if(currentChar == '\n'){
-            System.out.println(lexeme);
-            throw new LexicalErrorException("Salto de Linea invalido dentro de un String",lexeme,lineNumber);
+            updateLexeme();
+            throw new LexicalErrorException("String mal formado, salto de linea inválido",lexeme,lineNumber);
         }
         else if (currentChar== '"'){
             updateLexeme();
