@@ -8,13 +8,10 @@ public class FileManager implements IFileManager {
     private BufferedReader fileBuffer;
     private boolean endOfFile= false;
 
-    public FileManager(String file){
+    public FileManager(String file) throws FileNotFoundException{
 
-        try {
-            fileIn = new FileReader(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        fileIn = new FileReader(file);
+
         fileBuffer = new BufferedReader(fileIn);
     }
 

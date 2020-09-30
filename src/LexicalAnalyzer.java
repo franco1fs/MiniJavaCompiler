@@ -199,11 +199,17 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
                 lineNumber++;
             updateCurrentChar();
         }
-        if (currentChar == '*') {
+        if(endOfFile){
+            throw new LexicalErrorException("Error al no cerrar el comentario Multilinea","",lineNumber);
+        }
+        else if (currentChar == '*') {
             updateCurrentChar();
-            if(currentChar == '/' || endOfFile) {
+            if(currentChar == '/') {
                 updateCurrentChar();
                 return nextToken();
+            }
+            else if(endOfFile){
+                throw new LexicalErrorException("Error al no cerrar el comentario Multilinea","",lineNumber);
             }
             else
                 return state_commentMultiLine();
@@ -280,14 +286,19 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             updateCurrentChar();
             throw new LexicalErrorException("Character mal formado, no se permite un caracter vacio '' ",lexeme,lineNumber);
         }
-        else if(currentChar == '\n'){
-            updateLexeme();
-            throw new LexicalErrorException("Caracter mal formado",lexeme,lineNumber);
-        }
-        else{
-            updateLexeme();
-            updateCurrentChar();
-            return state_checkSingleQuote();
+        else {
+            if(endOfFile){
+                throw new LexicalErrorException("Finalizo el archivo",lexeme,lineNumber);
+            }
+            else {
+                if(Character.isWhitespace(currentChar) && (int) currentChar == 13) {
+                    lexeme += '\n';
+                }else
+                    updateLexeme();
+
+                updateCurrentChar();
+                return state_checkSingleQuote();
+            }
         }
     }
 
@@ -298,14 +309,19 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             return  state_returnLiteralChar();
         }
         else{
-            throw new LexicalErrorException("Character mal formado, falto cerrar las comillas simples",lexeme,lineNumber);
+            throw new LexicalErrorException("Character mal formado ",lexeme,lineNumber);
         }
     }
     private Token state_allPossibleChar() throws LexicalErrorException {
         if (endOfFile) {
             throw new LexicalErrorException("Character mal formado",lexeme,lineNumber);
         } else {
-            updateLexeme();
+            if(Character.isWhitespace(currentChar) && (int)currentChar == 13) {
+                lexeme += '\n';
+            }
+            else
+                updateLexeme();
+
             updateCurrentChar();
             return state_checkSingleQuote();
         }
