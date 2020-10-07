@@ -56,21 +56,21 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
 
         tokensConversion.put("+","Operador suma");
         tokensConversion.put("-","Operador resta");
-        tokensConversion.put("*","Operador multiplicación");
+        tokensConversion.put("*","Operador multiplicacion");
         tokensConversion.put("/","Operador modulo");
-        tokensConversion.put("%","Operador división");
-        tokensConversion.put(">","Operador Mayor");
-        tokensConversion.put(">=", "Operador Mayor o igual");
-        tokensConversion.put("<", "Operador Menor");
-        tokensConversion.put("<=", "Operador Menor o igual");
-        tokensConversion.put("==", "Operador Comparacion");
-        tokensConversion.put("!", "Operador Not");
-        tokensConversion.put("!=", "Operador Distinto");
+        tokensConversion.put("%","Operador division");
+        tokensConversion.put(">","Operador mayor");
+        tokensConversion.put(">=", "Operador mayor o igual");
+        tokensConversion.put("<", "Operador menor");
+        tokensConversion.put("<=", "Operador menor o igual");
+        tokensConversion.put("==", "Operador comparacion");
+        tokensConversion.put("!", "Operador not");
+        tokensConversion.put("!=", "Operador distinto");
         tokensConversion.put("&&","Operador AND");
         tokensConversion.put("||","Operador OR");
         tokensConversion.put("=", "Asignacion");
-        tokensConversion.put("+=", "Asignacion Compuesta con +");
-        tokensConversion.put("-=", "Asignacion Compuesta con -");
+        tokensConversion.put("+=", "Asignacion +");
+        tokensConversion.put("-=", "Asignacion -");
     }
     private void updateLexeme(){
         lexeme = lexeme + currentChar;
@@ -79,6 +79,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
     private void updateCurrentChar(){
         try {
             currentChar = fileManager.nextChar();
+            char c = '\n';
         }
         catch (Exception endOfFileLexicalErrorException){
             currentChar = '\n';
@@ -242,7 +243,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             if(reservedWords.contains(lexeme))
                 return new Token("pr_"+lexeme,lexeme,lineNumber);
             else
-                return new Token("Identificador de clase",lexeme,lineNumber);
+                return new Token("idClase",lexeme,lineNumber);
         }
     }
 
@@ -257,7 +258,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
                 return new Token("pr_"+lexeme,lexeme,lineNumber);
             }
             else{
-                return new Token("Identificador de Variable/Metodo",lexeme,lineNumber);
+                return new Token("idMetVar",lexeme,lineNumber);
             }
 
         }
@@ -271,7 +272,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         }
         else{
 
-            return new Token("Literal Integer",lexeme,lineNumber);
+            return new Token("Literal int",lexeme,lineNumber);
         }
     }
 
@@ -328,7 +329,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
     }
 
     private Token state_returnLiteralChar(){
-        return  new Token("Literal Character",lexeme,lineNumber);
+        return  new Token("Literal char",lexeme,lineNumber);
     }
     private Token state_literalString() throws LexicalErrorException{
         if(endOfFile){
