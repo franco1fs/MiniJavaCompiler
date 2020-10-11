@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 public class FileManager implements IFileManager {
 
@@ -22,5 +23,16 @@ public class FileManager implements IFileManager {
             throw new Exception("EOF");
 
         return (char) nextChar;
+    }
+
+    public String firstLine(){
+        String firstLine = "";
+        try {
+            firstLine = fileBuffer.readLine();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return firstLine;
     }
 }

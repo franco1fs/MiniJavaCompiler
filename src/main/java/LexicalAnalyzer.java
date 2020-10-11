@@ -44,7 +44,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
 
     private void initializeTokensNames(){
         tokensConversion = new Hashtable<String, String>();
-        tokensConversion.put("{","LLave abre");
+        tokensConversion.put("{","Llave abre");
         tokensConversion.put("}","Llave cierra");
         tokensConversion.put(";","Punto y coma");
         tokensConversion.put(".","Punto");
@@ -57,8 +57,8 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         tokensConversion.put("+","Operador suma");
         tokensConversion.put("-","Operador resta");
         tokensConversion.put("*","Operador multiplicacion");
-        tokensConversion.put("/","Operador modulo");
-        tokensConversion.put("%","Operador division");
+        tokensConversion.put("/","Operador division");
+        tokensConversion.put("%","Operador modulo");
         tokensConversion.put(">","Operador mayor");
         tokensConversion.put(">=", "Operador mayor o igual");
         tokensConversion.put("<", "Operador menor");
