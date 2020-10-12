@@ -39,7 +39,7 @@ public class SyntacticAnalyzer {
     private void restoDeClases() throws SyntacticErrorException, LexicalErrorException{
         // Primeros (<Clase>) = {class}
         if(Objects.equals("pr_class", currentToken.getName())){
-            clase();
+            listaClases();
         }
         else{
             // <RestoDeClases> -> e
@@ -186,7 +186,7 @@ public class SyntacticAnalyzer {
     }
     private void tipoMetodo() throws SyntacticErrorException,LexicalErrorException{
         //Pr(tipo) = {boolean,char,int,String,idClase}
-        if(Arrays.asList("icClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
+        if(Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
             tipo();
         }
         else if(Objects.equals("pr_void", currentToken.getName())){
@@ -205,7 +205,7 @@ public class SyntacticAnalyzer {
 
     private void listaArgsFormalesOVacio() throws SyntacticErrorException, LexicalErrorException{
         //Pr(listaArgsFormales)= {boolean,int,char,String,idClase}
-        if(Arrays.asList("icClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())) {
+        if(Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())) {
             listaArgsFormales();
         }
         else{
@@ -239,7 +239,7 @@ public class SyntacticAnalyzer {
     }
 
     private void listaSentencias() throws SyntacticErrorException, LexicalErrorException{
-        List<String> firstOfSentence = Arrays.asList("icClase","pr_boolean","pr_char","pr_int","pr_String",
+        List<String> firstOfSentence = Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String",
                 "Llave abre","Punto y coma","pr_if","pr_while","pr_return",
                 "pr_this","idMetVar","pr_static","pr_new","Parentesis abre");
 
@@ -260,7 +260,7 @@ public class SyntacticAnalyzer {
             asignacionOLlamada();
             match("Punto y coma");
         }
-        else if(Arrays.asList("icClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
+        else if(Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
             tipo();
             listaDecVars();
             match("Punto y coma");
@@ -290,7 +290,7 @@ public class SyntacticAnalyzer {
         }
         else{
             throw new SyntacticErrorException(currentToken,"Punto y coma, pr_this, idMetVar, pr_static ,pr_new ," +
-                    "Parentesis abre, pr_if, icClase, pr_boolean, pr_char, pr_int, pr_String, pr_while, Llave abre, pr_return");
+                    "Parentesis abre, pr_if, idClase, pr_boolean, pr_char, pr_int, pr_String, pr_while, Llave abre, pr_return");
         }
     }
     private void restoSentenciaElseOVacio() throws SyntacticErrorException, LexicalErrorException{
