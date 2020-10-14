@@ -27,9 +27,82 @@ public class SyntacticAnalyzer {
     }
 
     private void inicial() throws SyntacticErrorException, LexicalErrorException{
-        listaClases();
+        //listaClases();
+        listaClasesOInterfaces();
         match("EOF");
     }
+
+    private void listaClasesOInterfaces() throws SyntacticErrorException, LexicalErrorException{
+        if(Objects.equals("pr_class",currentToken.getName())){
+            clase();
+            restoDeClasesOInterface();
+        }
+        else if(Objects.equals("pr_interface",currentToken.getName())){
+            encabezadoInterface();
+            restoDeClasesOInterface();
+        }
+        else{
+            throw new SyntacticErrorException(currentToken, "pr_class o pr_interface");
+        }
+    }
+    private void restoDeClasesOInterface() throws SyntacticErrorException, LexicalErrorException{
+        if(Arrays.asList("pr_class","pr_interface").contains(currentToken.getName())) {
+            listaClasesOInterfaces();
+        }
+        else {
+            // -> e
+        }
+
+    }
+
+    private void encabezadoInterface () throws SyntacticErrorException, LexicalErrorException{
+        match("pr_interface");
+        match("idClase");
+        extendsInterface();
+        match("Llave abre");
+        listaSignaturaMetodo();
+        match("Llave cierra");
+    }
+
+    private void extendsInterface() throws SyntacticErrorException, LexicalErrorException{
+        if (Objects.equals("pr_extends",currentToken.getName())){
+            match("pr_extends");
+            match("idClase");
+            restoExtendsInterface();
+        }
+        else{
+            //-> e
+        }
+    }
+
+    private void restoExtendsInterface() throws SyntacticErrorException, LexicalErrorException{
+        if(Objects.equals("Coma",currentToken.getName())){
+            match("Coma");
+            match("idClase");
+            restoExtendsInterface();
+        }
+        else{
+            // -> e
+        }
+    }
+    private void listaSignaturaMetodo() throws SyntacticErrorException, LexicalErrorException{
+        if(Arrays.asList("pr_dynamic","pr_static").contains(currentToken.getName())) {
+            signaturaMetodo();
+            listaSignaturaMetodo();
+        }
+        else {
+            // -> e
+        }
+        }
+
+    private void signaturaMetodo() throws SyntacticErrorException,LexicalErrorException{
+        formaMetodo();
+        tipoMetodo();
+        match("idMetVar");
+        argsFormales();
+        match("Punto y coma");
+    }
+    /*
 
     private void listaClases() throws SyntacticErrorException, LexicalErrorException{
         clase();
@@ -45,7 +118,7 @@ public class SyntacticAnalyzer {
             // <RestoDeClases> -> e
         }
     }
-
+*/
     private void clase() throws SyntacticErrorException, LexicalErrorException{
         match("pr_class");
         match("idClase");

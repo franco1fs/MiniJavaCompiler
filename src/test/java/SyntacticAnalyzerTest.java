@@ -69,7 +69,15 @@ class SyntacticAnalyzerTest {
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p31_detodo.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p32_return.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p33_clasesifelse.txt")),
-                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p34_todagramatica.txt"))
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p34_todagramatica.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p35_interface.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p36_interfaceymetodo.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p37_interfaceextends.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\p38_claseinterface.txt"))
+
+
+
+
 
 
 

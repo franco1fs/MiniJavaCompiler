@@ -40,6 +40,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         reservedWords.add("null");
         reservedWords.add("true");
         reservedWords.add("false");
+        reservedWords.add("interface");
     }
 
     private void initializeTokensNames(){
