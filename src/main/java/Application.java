@@ -11,18 +11,24 @@ public class Application {
 
                 LexicalAnalyzer lex = new LexicalAnalyzer(fileManager);
 
-                String eof = "";
-            do {
                 try {
-                    Token token = lex.nextToken();
-                    System.out.println("(" + token.getName() + "," + token.getLexeme() + "," + token.getLineNumber() + ")");
-                    eof = token.getName();
-                } catch (LexicalErrorException e) {
-                    System.out.println("Error Léxico en la linea "+e.getLineNumber()+":"+e.getMessage());
+                    SyntacticAnalyzer syntacticAnalyzer = new SyntacticAnalyzer(lex);
+
+                    System.out.println("Compilacion Exitosa \n \n [SinErrores]");
+
+                }
+                catch (SyntacticErrorException e){
+                    System.out.println("Error Sintactico en linea "+e.getReceivedToken().getLineNumber()+": \n" +
+                            "se esperaba "+e.getExpectedTokenName()+" y se encontro "+ e.getReceivedToken().getLexeme() +"\n" +
+                            "[Error:"+e.getReceivedToken().getLexeme()+"|"+e.getReceivedToken().getLineNumber()+"]");
+                }
+                catch (LexicalErrorException e){
+                    System.out.println("Error Lexico en la linea "+e.getLineNumber()+":"+e.getMessage());
                     System.out.println("[ERROR:"+e.getLexeme()+"|"+e.getLineNumber()+"]");
                 }
-            }while (!eof.equals("EOF"));
-            }
+
+                 }
+
             catch (FileNotFoundException f){
                 System.out.println("Se produjo un error al intentar abrir el archivo::"+f.getMessage());
                 System.out.println("Intente nuevamente introduciendo de forma correcta la ruta del archivo");
