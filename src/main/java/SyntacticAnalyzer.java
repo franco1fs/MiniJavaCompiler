@@ -1,15 +1,19 @@
 import java.util.*;
+import symbolTable.*;
+import symbolTable.Class;
 
 public class SyntacticAnalyzer {
-
 
     private LexicalAnalyzer lexicalAnalyzer;
     private Token currentToken;
     private Token nextToken = null;
 
-    public SyntacticAnalyzer(LexicalAnalyzer aLex) throws SyntacticErrorException, LexicalErrorException{
+    private SymbolTable symbolTable;
+
+    public SyntacticAnalyzer(LexicalAnalyzer aLex) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         lexicalAnalyzer = aLex;
         currentToken = aLex.nextToken();
+        symbolTable = SymbolTable.getInstance();
         inicial();
 
     }
@@ -31,12 +35,12 @@ public class SyntacticAnalyzer {
 
 
 
-    private void inicial() throws SyntacticErrorException, LexicalErrorException{
+    private void inicial() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         listaClasesOInterfaces();
         match("EOF");
     }
 
-    private void listaClasesOInterfaces() throws SyntacticErrorException, LexicalErrorException{
+    private void listaClasesOInterfaces() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("pr_class",currentToken.getName())){
             clase();
             restoDeClasesOInterface();
@@ -49,7 +53,7 @@ public class SyntacticAnalyzer {
             throw new SyntacticErrorException(currentToken, "pr_class o pr_interface");
         }
     }
-    private void restoDeClasesOInterface() throws SyntacticErrorException, LexicalErrorException{
+    private void restoDeClasesOInterface() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("pr_class","pr_interface").contains(currentToken.getName())) {
             listaClasesOInterfaces();
         }
@@ -59,7 +63,7 @@ public class SyntacticAnalyzer {
 
     }
 
-    private void encabezadoInterface () throws SyntacticErrorException, LexicalErrorException{
+    private void encabezadoInterface () throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("pr_interface");
         match("idClase");
         genericidad();
@@ -103,7 +107,7 @@ public class SyntacticAnalyzer {
             // -> e
         }
     }
-    private void listaSignaturaMetodo() throws SyntacticErrorException, LexicalErrorException{
+    private void listaSignaturaMetodo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("pr_dynamic","pr_static").contains(currentToken.getName())) {
             signaturaMetodo();
             listaSignaturaMetodo();
@@ -113,7 +117,7 @@ public class SyntacticAnalyzer {
         }
         }
 
-    private void signaturaMetodo() throws SyntacticErrorException,LexicalErrorException{
+    private void signaturaMetodo() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
         formaMetodo();
         tipoMetodo();
         match("idMetVar");
@@ -121,29 +125,42 @@ public class SyntacticAnalyzer {
         match("Punto y coma");
     }
 
-    private void clase() throws SyntacticErrorException, LexicalErrorException{
+    private void clase() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("pr_class");
+        String className = currentToken.getLexeme();
+        int lineNumber = currentToken.getLineNumber();
         match("idClase");
+
+        Class clase = new Class(className,lineNumber);
+        symbolTable.setCurrentModule(clase);
+
         genericidad();
-        herencia();
+
+        String ancestorName = herencia();
+        clase.setAncestor(ancestorName);
+
         match("Llave abre");
         listaMiembros();
         match("Llave cierra");
+        symbolTable.insertClass(clase);
     }
 
-    private void herencia() throws SyntacticErrorException, LexicalErrorException{
-        // Pr(<herencia>)= {extends}
+    private String herencia() throws SyntacticErrorException, LexicalErrorException{
+        String inheritanceClassName = "";
         if(Objects.equals("pr_extends", currentToken.getName())){
             match("pr_extends");
+            inheritanceClassName = currentToken.getName();
             match("idClase");
             genericidad();
         }
         else{
             //  herencia -> e
+            inheritanceClassName = "Object";
         }
+        return inheritanceClassName;
     }
 
-    private void listaMiembros() throws SyntacticErrorException, LexicalErrorException{
+    private void listaMiembros() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         List<String> first = Arrays.asList("pr_public","pr_private", "idClase",
                 "pr_static","pr_dynamic","pr_boolean","pr_char","pr_int","pr_String");
         if(first.contains(currentToken.getName())){
@@ -155,7 +172,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void predictMemberPath () throws LexicalErrorException, SyntacticErrorException {
+    private void predictMemberPath () throws LexicalErrorException, SyntacticErrorException, SemanticErrorException {
         nextToken = lexicalAnalyzer.nextToken();
         if(Objects.equals(nextToken.getName(),"idMetVar")){
             atributo();
@@ -170,7 +187,7 @@ public class SyntacticAnalyzer {
 
 
 
-    private void miembro() throws SyntacticErrorException, LexicalErrorException{
+    private void miembro() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("pr_public","pr_private").contains(currentToken.getName())){
             atributo();
         }
@@ -188,90 +205,134 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void atributo() throws SyntacticErrorException, LexicalErrorException {
+    private void atributo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
+        String visibility = "public";
+        Type type;
         if (Arrays.asList("pr_public", "pr_private").contains(currentToken.getName())) {
-            visibilidad();
-            tipo();
-            listaDecAtrs();
+            visibility = visibilidad();
+            type = tipo();
+            listaDecAtrs(visibility,type);
             match("Punto y coma");
         }
         else if(Arrays.asList("pr_boolean","pr_char","pr_int","pr_String","idClase").contains(currentToken.getName())){
-            tipo();
-            listaDecAtrs();
+            type = tipo();
+            listaDecAtrs(visibility,type);
             match("Punto y coma");
         }
         else{
             throw new SyntacticErrorException(currentToken,"declaración de un atributo con o sin visibilidad");
         }
     }
-    private void metodo() throws SyntacticErrorException, LexicalErrorException{
-        formaMetodo();
-        tipoMetodo();
+    private void metodo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        String methodForm = formaMetodo();
+        MethodType methodType = tipoMetodo();
+        String methodName = currentToken.getLexeme();
+        int lineNumber =  currentToken.getLineNumber();
         match("idMetVar");
+
+        Class currentClass = (Class) symbolTable.getCurrentModule();
+
+        Method method = new Method(methodName,currentClass,methodType,methodForm,lineNumber);
+        currentClass.setCurrentUnit(method);
         argsFormales();
         bloque();
+
+        currentClass.insertMethod(method);
     }
 
-    private void constructor() throws SyntacticErrorException, LexicalErrorException{
+    private void constructor() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        String constructorName = currentToken.getLexeme();
+        int line = currentToken.getLineNumber();
+
         match("idClase");
+
+        Class currentClass = (Class) symbolTable.getCurrentModule();
+        Constructor c = new Constructor(constructorName,line,currentClass);
+        currentClass.setCurrentUnit(c);
+
         genericidad();
         argsFormales();
         bloque();
+        currentClass.insertConstructor(c);
     }
 
-    private void visibilidad() throws SyntacticErrorException, LexicalErrorException{
-
+    private String visibilidad() throws SyntacticErrorException, LexicalErrorException{
+        String visibility = "";
         if(Objects.equals("pr_public", currentToken.getName())) {
+            visibility = "public";
             match("pr_public");
+            return visibility;
         }
         else if(Objects.equals("pr_private", currentToken.getName())) {
+            visibility = "private";
             match("pr_private");
+            return visibility;
         }
         else{
             throw new SyntacticErrorException(currentToken, " pr_public o pr_private");
         }
         }
-    private void tipo() throws SyntacticErrorException, LexicalErrorException{
+    private Type tipo() throws SyntacticErrorException, LexicalErrorException{
         //Primeros (TipoPrimitivo) = {boolean,char,int,string}
+        Type type;
         if(Arrays.asList("pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
-            tipoPrimitivo();
+            type = tipoPrimitivo();
+            return type;
         }
         else if(Objects.equals("idClase", currentToken.getName())) {
+            type = new TidClass(currentToken.getLexeme());
             match("idClase");
+            return type;
         }
         else{
             throw new SyntacticErrorException(currentToken, "pr_boolean, pr_char, pr_int, pr_String o idClase");
         }
     }
 
-    private void tipoPrimitivo() throws SyntacticErrorException, LexicalErrorException{
+    private Type tipoPrimitivo() throws SyntacticErrorException, LexicalErrorException{
+        Type type;
         if(Objects.equals("pr_boolean", currentToken.getName())){
+            type = new Tboolean("boolean");
             match("pr_boolean");
+            return type;
         }
         else if(Objects.equals("pr_char", currentToken.getName())){
+            type = new Tchar("char");
             match("pr_char");
+            return type;
         }
         else if(Objects.equals("pr_int", currentToken.getName())){
+            type = new Tint("int");
             match("pr_int");
+            return type;
         }
         else if(Objects.equals("pr_String", currentToken.getName())){
+            type = new TString("String");
             match("pr_String");
+            return type;
         }
         else{
             throw  new SyntacticErrorException(currentToken,"pr_boolean, pr_char, pr_int o pr_String");
         }
     }
 
-    private void listaDecAtrs() throws SyntacticErrorException, LexicalErrorException{
+    private void listaDecAtrs(String visibility,Type type) throws SyntacticErrorException, LexicalErrorException,
+            SemanticErrorException{
+        Attribute attribute = new Attribute(currentToken.getLexeme(),currentToken.getLineNumber(),type,visibility);
         match("idMetVar");
+
+        Class currentClass = (Class) symbolTable.getCurrentModule();
+        currentClass.insertAttribute(attribute);
+
         asignacionOVacio();
-        restoListaDecAtrs();
+        restoListaDecAtrs(visibility,type);
     }
 
-    private void restoListaDecAtrs() throws SyntacticErrorException, LexicalErrorException{
+    private void restoListaDecAtrs(String visibility, Type type) throws SyntacticErrorException, LexicalErrorException,
+            SemanticErrorException{
         if(Objects.equals("Coma", currentToken.getName())){
             match("Coma");
-            listaDecAtrs();
+            listaDecAtrs(visibility,type);
         }
         else {
             // restoListaDecAtrs -> e
@@ -279,37 +340,47 @@ public class SyntacticAnalyzer {
     }
 
 
-    private void formaMetodo() throws SyntacticErrorException,LexicalErrorException{
+    private String formaMetodo() throws SyntacticErrorException,LexicalErrorException{
+        String methodForm = "";
         if(Objects.equals("pr_static", currentToken.getName())){
+            methodForm = "static";
             match("pr_static");
+            return methodForm;
         }
         else if(Objects.equals("pr_dynamic", currentToken.getName())){
+            methodForm = "dynamic";
             match("pr_dynamic");
+            return methodForm;
         }
         else{
             throw new SyntacticErrorException(currentToken,"pr_satic o pr_dynamic");
         }
     }
-    private void tipoMetodo() throws SyntacticErrorException,LexicalErrorException{
+    private MethodType tipoMetodo() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
+        MethodType methodType;
         //Pr(tipo) = {boolean,char,int,String,idClase}
         if(Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
-            tipo();
+            methodType = tipo();
+            return methodType;
         }
         else if(Objects.equals("pr_void", currentToken.getName())){
+            methodType = new Tvoid();
             match("pr_void");
+            return methodType;
         }
         else{
             throw new SyntacticErrorException(currentToken,"pr_boolean, pr_char, pr_int o pr_String, idClase o pr_void");
         }
     }
 
-    private void argsFormales() throws SyntacticErrorException, LexicalErrorException{
+    private void argsFormales() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("Parentesis abre");
         listaArgsFormalesOVacio();
         match("Parentesis cierra");
     }
 
-    private void listaArgsFormalesOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void listaArgsFormalesOVacio() throws SyntacticErrorException, LexicalErrorException,
+            SemanticErrorException{
         //Pr(listaArgsFormales)= {boolean,int,char,String,idClase}
         if(Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())) {
             listaArgsFormales();
@@ -319,12 +390,12 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void listaArgsFormales() throws SyntacticErrorException, LexicalErrorException{
+    private void listaArgsFormales() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         argFormal();
         restoArgFormales();
     }
 
-    private void restoArgFormales() throws SyntacticErrorException, LexicalErrorException{
+    private void restoArgFormales() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Coma", currentToken.getName())){
             match("Coma");
             listaArgsFormales();
@@ -333,9 +404,15 @@ public class SyntacticAnalyzer {
             // restoArgsFormales -> e
         }
     }
-    private void argFormal() throws SyntacticErrorException, LexicalErrorException{
-        tipo();
+    private void argFormal() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        Type type = tipo();
+        Parameter parameter = new Parameter(currentToken.getLexeme(),currentToken.getLineNumber(),type);
         match("idMetVar");
+        Class currentClass = (Class) symbolTable.getCurrentModule();
+        //Constructor constructor = (Constructor) currentClass.getCurrentUnit();
+        //constructor.insertParameter(parameter);
+        Unit unit = currentClass.getCurrentUnit();
+        unit.insertParameter(parameter);
     }
 
     private void bloque() throws SyntacticErrorException, LexicalErrorException{

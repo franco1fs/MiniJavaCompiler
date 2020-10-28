@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import symbolTable.SemanticErrorException;
 
 import java.io.FileNotFoundException;
 import java.util.stream.Stream;
@@ -26,6 +27,9 @@ class SyntacticAnalyzerTest {
         }
         catch (LexicalErrorException e){
             System.out.println(e.getMessage());
+        }
+        catch (SemanticErrorException e){
+
         }
     }
 
@@ -77,25 +81,9 @@ class SyntacticAnalyzerTest {
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Sintactico\\p42_visimpconstructor.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Sintactico\\p43_llamadametodos.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Sintactico\\p44_todagramatica.txt"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         );
     }
+
+
 
 }

@@ -1,7 +1,11 @@
+import symbolTable.SemanticErrorException;
+import symbolTable.SymbolTable;
+
 import java.io.FileNotFoundException;
 
 public class Application {
     public static void main (String args[]){
+        /**
         String fileName;
 
         if(args.length == 1){
@@ -26,6 +30,9 @@ public class Application {
                     System.out.println("Error Lexico en la linea "+e.getLineNumber()+":"+e.getMessage());
                     System.out.println("[ERROR:"+e.getLexeme()+"|"+e.getLineNumber()+"]");
                 }
+                catch (SemanticErrorException e){
+                    //Lo agrego ya para que compilee
+                }
 
                  }
 
@@ -37,6 +44,9 @@ public class Application {
         else{
             System.out.println("La cantidad de argumentos es INVALIDA, falta agregar la ruta del archivo de entrada");
         }
+         **/
+
+        SymbolTable symbolTable = SymbolTable.getInstance();
 
 
     }
