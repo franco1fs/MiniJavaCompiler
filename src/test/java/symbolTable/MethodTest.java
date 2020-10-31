@@ -36,4 +36,27 @@ class MethodTest {
             assertEquals(e.getLexeme(),"p1");
         }
     }
+
+    @Test
+    public void checkEqualsForOverWriteMethod(){
+        Method m1 = createMethod(null);
+        Parameter parameter = new Parameter("p1",1,new Tint("int"));
+        Parameter parameter2 = new Parameter("p2",1,new Tint("int"));
+        Parameter parameter3 = new Parameter("p3",1,new Tint("int"));
+        Parameter parameter4 = new Parameter("p5",1,new TString("String"));
+        Method m2 = createMethod(null);
+        try {
+            m1.insertParameter(parameter);
+            m1.insertParameter(parameter2);
+            m1.insertParameter(parameter3);
+            m2.insertParameter(parameter);
+            m2.insertParameter(parameter2);
+            m2.insertParameter(parameter4);
+
+            assertEquals(false,m1.equalsForOverWrite(m2));
+        }
+        catch (SemanticErrorException e){
+
+        }
+    }
 }

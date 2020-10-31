@@ -6,4 +6,8 @@ public class Tvoid extends MethodType {
     public boolean mustCheckTypeExistence() {
         return false;
     }
+
+    public String getTypeName(){
+        return "void";
+    }
 }

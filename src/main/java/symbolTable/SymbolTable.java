@@ -1,5 +1,7 @@
 package symbolTable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class SymbolTable {
@@ -7,6 +9,7 @@ public class SymbolTable {
     private static final SymbolTable myInstance = new SymbolTable();
     private HashMap<String,Class> classes;
     private Module currentModule;
+    private ArrayList<String> orderOfClases = new ArrayList<String>();
 
 
     public static SymbolTable getInstance(){
@@ -94,7 +97,7 @@ public class SymbolTable {
         }
 
         classes.put(c.getName(),c);
-        //currentModule = c;
+        orderOfClases.add(c.getName());
 
          }
 
@@ -109,4 +112,16 @@ public class SymbolTable {
         return classes;
     }
 
+    public void restartSymbomStructure(){
+        classes = new HashMap<String, Class>();
+    }
+
+    public void checkClasesDeclaration() throws SemanticErrorException{
+        for (String c: orderOfClases){
+            classes.get(c).checkCorrectDeclaration();
+        }
+        //ChequearFor el Main
+        }
+
 }
+

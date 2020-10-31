@@ -14,6 +14,7 @@ public class SyntacticAnalyzer {
         lexicalAnalyzer = aLex;
         currentToken = aLex.nextToken();
         symbolTable = SymbolTable.getInstance();
+        symbolTable.restartSymbomStructure();
         inicial();
 
     }
@@ -139,12 +140,35 @@ public class SyntacticAnalyzer {
         String ancestorName = herencia();
         clase.setAncestor(ancestorName);
 
+        implementsInterfaces();
+
         match("Llave abre");
         listaMiembros();
         match("Llave cierra");
         symbolTable.insertClass(clase);
     }
 
+    private void implementsInterfaces() throws  SyntacticErrorException, LexicalErrorException, SemanticErrorException {
+        if(Objects.equals("pr_implements",currentToken.getName())){
+            match("pr_implements");
+            match("idClase");
+            restoInterfaces();
+        }
+        else {
+            // -> e
+        }
+    }
+
+    private void restoInterfaces() throws SyntacticErrorException, LexicalErrorException , SyntacticErrorException{
+        if(Objects.equals("Coma",currentToken.getName())){
+            match("Coma");
+            match("idClase");
+            restoInterfaces();
+        }
+        else{
+            // - > e
+        }
+    }
     private String herencia() throws SyntacticErrorException, LexicalErrorException{
         String inheritanceClassName = "";
         if(Objects.equals("pr_extends", currentToken.getName())){
@@ -186,7 +210,7 @@ public class SyntacticAnalyzer {
     }
 
 
-
+    
     private void miembro() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("pr_public","pr_private").contains(currentToken.getName())){
             atributo();
@@ -197,7 +221,7 @@ public class SyntacticAnalyzer {
         else  if(Arrays.asList("pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
             atributo();
         }
-        else if(Arrays.asList( "pr_static","pr_dynamic").contains(currentToken.getName())){
+        else if(Arrays.asList("pr_static", "pr_dynamic").contains(currentToken.getName())){
             metodo();
         }
         else{
@@ -210,6 +234,7 @@ public class SyntacticAnalyzer {
         Type type;
         if (Arrays.asList("pr_public", "pr_private").contains(currentToken.getName())) {
             visibility = visibilidad();
+            estatico();
             type = tipo();
             listaDecAtrs(visibility,type);
             match("Punto y coma");
@@ -221,6 +246,15 @@ public class SyntacticAnalyzer {
         }
         else{
             throw new SyntacticErrorException(currentToken,"declaración de un atributo con o sin visibilidad");
+        }
+    }
+
+    private void estatico() throws SyntacticErrorException, LexicalErrorException, SyntacticErrorException{
+        if(Objects.equals("pr_static",currentToken.getName())){
+            match("pr_static");
+        }
+        else{
+            // -> e
         }
     }
     private void metodo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
@@ -282,6 +316,7 @@ public class SyntacticAnalyzer {
         else if(Objects.equals("idClase", currentToken.getName())) {
             type = new TidClass(currentToken.getLexeme());
             match("idClase");
+            genericidad();
             return type;
         }
         else{
@@ -415,13 +450,13 @@ public class SyntacticAnalyzer {
         unit.insertParameter(parameter);
     }
 
-    private void bloque() throws SyntacticErrorException, LexicalErrorException{
+    private void bloque() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("Llave abre");
         listaSentencias();
         match("Llave cierra");
     }
 
-    private void listaSentencias() throws SyntacticErrorException, LexicalErrorException{
+    private void listaSentencias() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         List<String> firstOfSentence = Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String",
                 "Llave abre","Punto y coma","pr_if","pr_while","pr_return",
                 "pr_this","idMetVar","pr_static","pr_new","Parentesis abre");
@@ -435,7 +470,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void predictSentencePath () throws LexicalErrorException, SyntacticErrorException {
+    private void predictSentencePath () throws LexicalErrorException, SyntacticErrorException , SemanticErrorException{
         nextToken = lexicalAnalyzer.nextToken();
         if(Objects.equals(nextToken.getName(),"idMetVar")){
             tipo();
@@ -452,7 +487,7 @@ public class SyntacticAnalyzer {
     }
 
 
-    private void sentencia() throws SyntacticErrorException, LexicalErrorException{
+    private void sentencia() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Punto y coma", currentToken.getName())){
             match("Punto y coma");
         }
@@ -496,7 +531,7 @@ public class SyntacticAnalyzer {
                     "Parentesis abre, pr_if, idClase, pr_boolean, pr_char, pr_int, pr_String, pr_while, Llave abre, pr_return");
         }
     }
-    private void restoSentenciaElseOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void restoSentenciaElseOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("pr_else", currentToken.getName())){
             match("pr_else");
             sentencia();
@@ -506,11 +541,11 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void asignacionOLlamada() throws SyntacticErrorException, LexicalErrorException {
+    private void asignacionOLlamada() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
         acceso();
         restoAsignacionOVacio();
     }
-    private void restoAsignacionOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void restoAsignacionOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("Asignacion","Asignacion +","Asignacion -").contains(currentToken.getName())){
             tipoDeAsignacion();
             expresion();
@@ -533,13 +568,13 @@ public class SyntacticAnalyzer {
             throw new SyntacticErrorException(currentToken,"Asignacion, Asignacion + o Asignacion -");
         }
     }
-    private void listaDecVars() throws SyntacticErrorException,LexicalErrorException{
+    private void listaDecVars() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
         match("idMetVar");
         asignacionOVacio();
         restoListaVarsOVacio();
     }
 
-    private void restoListaVarsOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void restoListaVarsOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Coma", currentToken.getName())) {
             match("Coma");
             listaDecVars();
@@ -549,7 +584,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void asignacionOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void asignacionOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Asignacion",currentToken.getName())){
             match("Asignacion");
             expresion();
@@ -559,7 +594,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void expresionOVacio() throws SyntacticErrorException, LexicalErrorException {
+    private void expresionOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
         List<String> firstOfExpOrEmp = Arrays.asList("pr_this","idMetVar","pr_static","pr_new","Parentesis abre",
                 "Operador suma","Operador resta","Operador not",
                 "pr_null","pr_true","pr_false","Literal int","Literal char","Literal String");
@@ -572,12 +607,12 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void expresion() throws SyntacticErrorException, LexicalErrorException{
+    private void expresion() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         expresionUnaria();
         restoExpresion();
     }
 
-    private void restoExpresion() throws SyntacticErrorException, LexicalErrorException{
+    private void restoExpresion() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         List<String> firstOfBinOp = Arrays.asList("Operador suma","Operador resta","Operador multiplicacion","Operador modulo",
                "Operador division","Operador OR","Operador AND","Operador mayor" , "Operador menor", "Operador mayor o igual",
                 "Operador menor o igual","Operador distinto","Operador comparacion");
@@ -592,7 +627,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void operadorBinario() throws SyntacticErrorException, LexicalErrorException{
+    private void operadorBinario() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Operador comparacion", currentToken.getName())){
             match("Operador comparacion");
         }
@@ -639,7 +674,7 @@ public class SyntacticAnalyzer {
                     "Operador OR o Operador AND");
         }
     }
-    private void expresionUnaria() throws SyntacticErrorException, LexicalErrorException{
+    private void expresionUnaria() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("Operador suma","Operador resta","Operador not").contains(currentToken.getName())) {
             operadorUnario();
             operando();
@@ -655,7 +690,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void operadorUnario() throws SyntacticErrorException, LexicalErrorException{
+    private void operadorUnario() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Operador suma", currentToken.getName())){
             match("Operador suma");
         }
@@ -669,7 +704,7 @@ public class SyntacticAnalyzer {
             throw new SyntacticErrorException(currentToken,"Operador suma, Operador resta o Operador not");
         }
     }
-    private void literal() throws SyntacticErrorException, LexicalErrorException{
+    private void literal() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("pr_null", currentToken.getName())){
             match("pr_null");
         }
@@ -694,7 +729,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void operando() throws SyntacticErrorException, LexicalErrorException{
+    private void operando() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("pr_null","pr_true","pr_false","Literal int","Literal char","Literal String").contains(currentToken.getName())){
             literal();
         }
@@ -707,12 +742,12 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void acceso() throws SyntacticErrorException,LexicalErrorException{
+    private void acceso() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
         primario();
         encadenado();
     }
 
-    private void primario() throws SyntacticErrorException,LexicalErrorException{
+    private void primario() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
         if(Objects.equals("pr_this",currentToken.getName())){
             accesoThis();
         }
@@ -739,12 +774,12 @@ public class SyntacticAnalyzer {
         match("pr_this");
     }
 
-    private void accesoVarOMetodo() throws SyntacticErrorException, LexicalErrorException{
+    private void accesoVarOMetodo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("idMetVar");
         restoAccesoMetodo();
     }
 
-    private void restoAccesoMetodo() throws SyntacticErrorException, LexicalErrorException{
+    private void restoAccesoMetodo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Parentesis abre",currentToken.getName())){
             argsActuales();
         }
@@ -753,7 +788,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void accesoEstatico() throws SyntacticErrorException, LexicalErrorException{
+    private void accesoEstatico() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("pr_static",currentToken.getName())) {
             match("pr_static");
             match("idClase");
@@ -769,25 +804,48 @@ public class SyntacticAnalyzer {
 
     }
 
-    private void restoAccesoEstatico () throws SyntacticErrorException, LexicalErrorException {
+    private void restoAccesoEstatico () throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
         genericidad();
         match("Punto");
         accesoVarOMetodo();
     }
-    private void accesoConstructor() throws SyntacticErrorException, LexicalErrorException{
+    private void accesoConstructor() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("pr_new");
         match("idClase");
-        genericidad();
+        genericidadConstructor();
         argsActuales();
     }
 
-    private void argsActuales() throws SyntacticErrorException, LexicalErrorException{
+    private void genericidadConstructor() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        if(Objects.equals("Operador menor",currentToken.getName())){
+            match("Operador menor");
+            restoGenerecidadConstructor();
+        }
+        else {
+            // -> e
+        }
+    }
+
+    private void restoGenerecidadConstructor() throws SyntacticErrorException, SemanticErrorException, LexicalErrorException{
+        if(Objects.equals("idClase",currentToken.getName())){
+            match("idClase");
+            match("Operador mayor");
+        }
+        else if(Objects.equals("Operador mayor",currentToken.getName())){
+            match("Operador mayor");
+        }
+        else{
+            throw new SyntacticErrorException(currentToken,"Esperaba Genericidad en el llamado a un constructor");
+        }
+    }
+
+    private void argsActuales() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("Parentesis abre");
         listaExpsOVacio();
         match("Parentesis cierra");
     }
 
-    private void listaExpsOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void listaExpsOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         List<String> first = Arrays.asList("Operador suma","Operador resta","Operador not",
                 "pr_null","pr_true","pr_false","Literal int","Literal char","Literal String",
                 "pr_this","idMetVar","pr_static","pr_new","Parentesis abre");
@@ -800,12 +858,12 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void listaExps() throws SyntacticErrorException, LexicalErrorException{
+    private void listaExps() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         expresion();
         restoListaExpsOVacio();
     }
 
-    private void restoListaExpsOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void restoListaExpsOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Coma",currentToken.getName())) {
             match("Coma");
             listaExps();
@@ -815,7 +873,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void encadenado() throws SyntacticErrorException, LexicalErrorException{
+    private void encadenado() throws SyntacticErrorException, LexicalErrorException,SemanticErrorException{
         if(Objects.equals("Punto",currentToken.getName())){
             varOMetodoEncadenado();
             encadenado();
@@ -825,17 +883,17 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void varOMetodoEncadenado() throws SyntacticErrorException, LexicalErrorException{
+    private void varOMetodoEncadenado() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         idEncadenado();
     }
 
-    private void idEncadenado() throws SyntacticErrorException, LexicalErrorException{
+    private void idEncadenado() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("Punto");
         match("idMetVar");
         argsActualesOVacio();
     }
 
-    private void argsActualesOVacio() throws SyntacticErrorException, LexicalErrorException{
+    private void argsActualesOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Parentesis abre",currentToken.getName())){
             argsActuales();
         }

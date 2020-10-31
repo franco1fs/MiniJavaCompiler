@@ -18,4 +18,13 @@ public class Attribute extends Entity{
     public String getVisibility(){
         return visibility;
     }
+
+    public void checkTypeExistence() throws SemanticErrorException {
+        if(type.mustCheckTypeExistence()){
+            if(!SymbolTable.getInstance().getClasses().containsKey(type.getTypeName())){
+                throw new SemanticErrorException(name,lineNumber,"Error Semantico en la linea: "+lineNumber+" el" +
+                        "Atributo "+name+" esta declarado con un tipo de clase no existente");
+            }
+        }
+    }
 }

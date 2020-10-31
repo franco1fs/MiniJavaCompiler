@@ -12,4 +12,13 @@ public class Parameter extends Entity{
     public Type getType(){
         return type;
     }
+
+    public void checkTypeExistence() throws SemanticErrorException {
+        if(type.mustCheckTypeExistence()){
+            if(!SymbolTable.getInstance().getClasses().containsKey(type.getTypeName())){
+                throw new SemanticErrorException(name,lineNumber,"Error Semantico en la linea: "+lineNumber+" el" +
+                        "Parametro "+name+" esta declarado con un tipo de clase no existente");
+            }
+        }
+    }
 }
