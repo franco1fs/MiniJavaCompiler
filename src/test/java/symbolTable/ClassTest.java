@@ -6,6 +6,7 @@ import symbolTable.Method;
 import symbolTable.SemanticErrorException;
 import symbolTable.Tvoid;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +37,7 @@ class ClassTest {
     }
 
     private Method createMethod(Class clase){
-        return new Method("m1",clase,new Tvoid(),"dynamic",2);
+        return new Method("m1",clase,new Tvoid(1),"dynamic",2);
     }
 
     private void loadSymbolTable(){
@@ -65,7 +66,7 @@ class ClassTest {
         loadSymbolTable();
         SymbolTable symbolTable = SymbolTable.getInstance();
         try {
-            symbolTable.checkClasesDeclaration();
+            symbolTable.checkClassesDeclarationAndConsolidationTable();
             System.out.println("Without issues");
         }
         catch (SemanticErrorException e){
@@ -86,13 +87,13 @@ class ClassTest {
         SymbolTable symbolTable ;
         symbolTable = SymbolTable.getInstance();
         try {
-            c1.insertAttribute(new Attribute("a1",1,new TString("String"),""));
-            c1.insertAttribute(new Attribute("a2",1,new TString("String"),""));
-            c1.insertAttribute(new Attribute("a3",1,new TString("String"),""));
-            c2.insertAttribute(new Attribute("a4",1,new TString("String"),""));
-            c2.insertAttribute(new Attribute("a5",1,new TString("String"),""));
-            c3.insertAttribute(new Attribute("a6",1,new TString("String"),""));
-            c3.insertAttribute(new Attribute("a1",1,new TString("String"),""));
+            c1.insertAttribute(new Attribute("a1",1,new TString("String",1),""));
+            c1.insertAttribute(new Attribute("a2",1,new TString("String",1),""));
+            c1.insertAttribute(new Attribute("a3",1,new TString("String",1),""));
+            c2.insertAttribute(new Attribute("a4",1,new TString("String",1),""));
+            c2.insertAttribute(new Attribute("a5",1,new TString("String",1),""));
+            c3.insertAttribute(new Attribute("a6",1,new TString("String",1),""));
+            c3.insertAttribute(new Attribute("a1",1,new TString("String",1),""));
             symbolTable.insertClass(c1);
             symbolTable.insertClass(c2);
             symbolTable.insertClass(c3);
@@ -120,6 +121,182 @@ class ClassTest {
 
     }
 
+    private void loadSymbolTableWithMethods(){
+        Class c1 = new Class("C1",1);
+        c1.setAncestor("C2");
+        Class c2 = new Class("C2",1);
+        c2.setAncestor("C3");
+        Class c3 = new Class("C3",1);
+
+        SymbolTable symbolTable ;
+        symbolTable = SymbolTable.getInstance();
+        try {
+            c1.insertMethod(new Method("m1",c1,new Tvoid(1),"dynamic",2));
+            c1.insertMethod(new Method("m2",c1,new Tvoid(1),"dynamic",2));
+            c2.insertMethod(new Method("m3",c1,new Tvoid(1),"dynamic",2));
+            c3.insertMethod(new Method("m1",c1,new Tvoid(1),"dynamic",2));
+
+            symbolTable.insertClass(c1);
+            symbolTable.insertClass(c2);
+            symbolTable.insertClass(c3);
+            // symbolTable.insertClass(c4);
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println("Load Symbol table "+ e.getMessage());
+        }
+    }
+
+    @Test
+    public void checkInheritanceMethodsDeclaration() {
+        loadSymbolTableWithMethods();
+        Collection<Class> clases = SymbolTable.getInstance().getClasses().values();
+        try{
+            for(Class c: clases){
+                c.checkMethodDeclaration();
+            }
+            assertEquals(3,SymbolTable.getInstance().getClasses().get("C1").getMyMethods().size());
+            assertEquals(2,SymbolTable.getInstance().getClasses().get("C2").getMyMethods().size());
+            assertEquals(1,SymbolTable.getInstance().getClasses().get("C3").getMyMethods().size());
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void loadSymbolTableForThrowExceptionWithMethods(){
+        Class c1 = new Class("C1",1);
+        c1.setAncestor("C2");
+        Class c2 = new Class("C2",1);
+        c2.setAncestor("C3");
+        Class c3 = new Class("C3",1);
+
+        SymbolTable symbolTable ;
+        symbolTable = SymbolTable.getInstance();
+        try {
+            c1.insertMethod(new Method("m1",c1,new Tvoid(1),"dynamic",2));
+            c1.insertMethod(new Method("m2",c1,new Tvoid(1),"dynamic",2));
+            c2.insertMethod(new Method("m3",c1,new Tvoid(1),"dynamic",2));
+            c3.insertMethod(new Method("m1",c1,new Tint("int",1),"dynamic",2));
+            symbolTable.insertClass(c1);
+            symbolTable.insertClass(c2);
+            symbolTable.insertClass(c3);
+            // symbolTable.insertClass(c4);
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void checkInheritanceMethodsThrowingExceptionDeclaration() {
+        loadSymbolTableForThrowExceptionWithMethods();
+        Collection<Class> clases = SymbolTable.getInstance().getClasses().values();
+        try{
+            for(Class c: clases){
+                c.checkMethodDeclaration();
+            }
+            assertEquals(3,SymbolTable.getInstance().getClasses().get("C1").getMyMethods().size());
+            assertEquals(2,SymbolTable.getInstance().getClasses().get("C2").getMyMethods().size());
+            assertEquals(1,SymbolTable.getInstance().getClasses().get("C3").getMyMethods().size());
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println(e.getMessage());
+            assertEquals("m1",e.getLexeme());
+        }
+    }
+
+    private void loadSymbolTableForThrowExceptionOfTypeWithMethods(){
+        Class c1 = new Class("C1",1);
+        c1.setAncestor("C2");
+        Class c2 = new Class("C2",1);
+        c2.setAncestor("C3");
+        Class c3 = new Class("C3",1);
+
+        SymbolTable symbolTable ;
+        symbolTable = SymbolTable.getInstance();
+        try {
+            c1.insertMethod(new Method("m1",c1,new Tvoid(1),"dynamic",2));
+            c1.insertMethod(new Method("m2",c1,new Tvoid(1),"dynamic",2));
+            c2.insertMethod(new Method("m3",c1,new TidClass("C4",1),"dynamic",2));
+            c3.insertMethod(new Method("m1",c1,new Tvoid(1),"dynamic",2));
+            symbolTable.insertClass(c1);
+            symbolTable.insertClass(c2);
+            symbolTable.insertClass(c3);
+            // symbolTable.insertClass(c4);
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void checkInheritanceMethodsThrowingExceptionTypeDeclaration() {
+        loadSymbolTableForThrowExceptionOfTypeWithMethods();
+        Collection<Class> clases = SymbolTable.getInstance().getClasses().values();
+        try{
+            for(Class c: clases){
+                c.checkMethodDeclaration();
+            }
+            assertEquals(3,SymbolTable.getInstance().getClasses().get("C1").getMyMethods().size());
+            assertEquals(2,SymbolTable.getInstance().getClasses().get("C2").getMyMethods().size());
+            assertEquals(1,SymbolTable.getInstance().getClasses().get("C3").getMyMethods().size());
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println(e.getMessage());
+            assertEquals("m3",e.getLexeme());
+        }
+    }
+
+    private void loadSymbolTableForParameters(){
+        Class c1 = new Class("C1",1);
+        c1.setAncestor("C2");
+        Class c2 = new Class("C2",1);
+        c2.setAncestor("C3");
+        Class c3 = new Class("C3",1);
+
+        SymbolTable symbolTable ;
+        symbolTable = SymbolTable.getInstance();
+        try {
+            c1.insertMethod(new Method("m1",c1,new Tvoid(1),"dynamic",2));
+            c1.insertMethod(new Method("m2",c1,new Tvoid(1),"dynamic",2));
+            c2.insertMethod(new Method("m3",c1,new TidClass("C4",1),"dynamic",2));
+            c3.insertMethod(new Method("m1",c1,new Tvoid(1),"dynamic",2));
+            Method m4 = new Method("m4",c1,new TidClass("C3",1),"dynamic",2);
+            m4.insertParameter(new Parameter("p1",1,new TidClass("No",1)));
+            c3.insertMethod(m4);
+            symbolTable.insertClass(c1);
+            symbolTable.insertClass(c2);
+            symbolTable.insertClass(c3);
+            // symbolTable.insertClass(c4);
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    @Test
+    public void checkMethodParametersAndThrowException(){
+        loadSymbolTableForParameters();
+        Collection<Class> clases = SymbolTable.getInstance().getClasses().values();
+        try{
+            for(Class c: clases){
+                c.checkMethodDeclaration();
+            }
+
+        }
+        catch (SemanticErrorException e){
+            System.out.println(e.getMessage());
+            assertEquals("p1",e.getLexeme());
+        }
+    }
 
     @Test
     public void insertMethodAndThrowExceptionTest(){
@@ -165,9 +342,9 @@ class ClassTest {
     public void insertAttributesTest(){
         Class clase = createClassObj();
         try {
-            Attribute attribute = new Attribute("a1",1,new Tint("int"),"private");
-            Attribute attribute2 = new Attribute("a2",1,new Tint("int"),"private");
-            Attribute attribute3 = new Attribute("a3",1,new Tint("int"),"private");
+            Attribute attribute = new Attribute("a1",1,new Tint("int",1),"private");
+            Attribute attribute2 = new Attribute("a2",1,new Tint("int",1),"private");
+            Attribute attribute3 = new Attribute("a3",1,new Tint("int",1),"private");
             clase.insertAttribute(attribute);
             clase.insertAttribute(attribute2);
             clase.insertAttribute(attribute3);
@@ -184,9 +361,9 @@ class ClassTest {
     public void insertAttributesAndThrowExceptionTest(){
         Class clase = createClassObj();
         try {
-            Attribute attribute = new Attribute("a1",1,new Tint("int"),"private");
-            Attribute attribute2 = new Attribute("a2",1,new Tint("int"),"private");
-            Attribute attribute3 = new Attribute("a2",1,new Tint("int"),"private");
+            Attribute attribute = new Attribute("a1",1,new Tint("int",1),"private");
+            Attribute attribute2 = new Attribute("a2",1,new Tint("int",1),"private");
+            Attribute attribute3 = new Attribute("a2",1,new Tint("int",1),"private");
             clase.insertAttribute(attribute);
             clase.insertAttribute(attribute2);
             clase.insertAttribute(attribute3);

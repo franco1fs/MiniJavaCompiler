@@ -36,6 +36,9 @@ public class Method extends Unit{
                         "metodo "+name+" retorna un tipo no declarado");
             }
         }
+        for(Parameter p: parameters){
+            p.checkTypeExistence(this);
+        }
     }
 
     public MethodType getReturnType(){
@@ -59,17 +62,10 @@ public class Method extends Unit{
         boolean answer = true;
         ArrayList<Parameter> m2Parameters = m2.getParameters();
         if(parameters.size() == m2Parameters.size()){
-            for (Parameter p: parameters){
-                boolean sameParameter = false;
-                for (Parameter p2 : m2Parameters){
-                    if(p2.getName().equals(p.getName()) &&
-                            p2.getType().getTypeName().equals(p.getType().getTypeName())){
-                        sameParameter = true;
-                        break;
-                    }
-                }
-                if(!sameParameter) {
-                    answer = false;
+            for (int index = 0; index<parameters.size();index++){
+                answer = parameters.get(index).getType().getTypeName().
+                        equals(m2Parameters.get(index).getType().getTypeName());
+                if(!answer){
                     break;
                 }
             }
@@ -79,7 +75,24 @@ public class Method extends Unit{
         }
         return answer;
     }
+    /**
 
-
+    public void probe(){
+        for (Parameter p: parameters){
+            boolean sameParameter = false;
+            for (Parameter p2 : m2Parameters){
+                if(p2.getName().equals(p.getName()) &&
+                        p2.getType().getTypeName().equals(p.getType().getTypeName())){
+                    sameParameter = true;
+                    break;
+                }
+            }
+            if(!sameParameter) {
+                answer = false;
+                break;
+            }
+        }
+    }
+     **/
 
 }

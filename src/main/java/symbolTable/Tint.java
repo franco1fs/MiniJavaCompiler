@@ -2,8 +2,9 @@ package symbolTable;
 
 public class Tint extends Type{
 
-    public Tint(String name){
+    public Tint(String name,int ln){
         this.name = name;
+        this.lineNumber=ln;
     }
 
     @Override

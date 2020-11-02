@@ -28,11 +28,11 @@ public class SymbolTable {
 
         Class system = new Class("System",0,"Object");
 
-        Type integer = new Tint("int");
-        Type booleano = new Tboolean("boolean");
-        Type caracter = new Tchar("char");
-        Type cadena = new TString("String");
-        Tvoid tVoid = new Tvoid();
+        Type integer = new Tint("int",0);
+        Type booleano = new Tboolean("boolean",0);
+        Type caracter = new Tchar("char",0);
+        Type cadena = new TString("String",0);
+        Tvoid tVoid = new Tvoid(0);
 
 
         try {
@@ -90,6 +90,13 @@ public class SymbolTable {
         }
     }
 
+    public void reLoadSymbolTable(){
+        classes = new HashMap<String, Class>();
+        loadBasicModules();
+        currentModule = null;
+        orderOfClases = new ArrayList<String>();
+    }
+
     public void insertClass(Class c) throws SemanticErrorException{
         if(classes.containsKey(c.name)){
             throw new SemanticErrorException(c.getName(),c.getLineNumber(),"Error en la linea: "+c.getLineNumber()
@@ -112,11 +119,7 @@ public class SymbolTable {
         return classes;
     }
 
-    public void restartSymbomStructure(){
-        classes = new HashMap<String, Class>();
-    }
-
-    public void checkClasesDeclaration() throws SemanticErrorException{
+    public void checkClassesDeclarationAndConsolidationTable() throws SemanticErrorException{
         for (String c: orderOfClases){
             classes.get(c).checkCorrectDeclaration();
         }

@@ -6,5 +6,7 @@ public abstract class MethodType {
 
     public abstract String getTypeName();
 
+    public abstract int getLineNumber();
+
 }
 

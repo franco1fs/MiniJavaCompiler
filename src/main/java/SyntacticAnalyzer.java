@@ -14,8 +14,9 @@ public class SyntacticAnalyzer {
         lexicalAnalyzer = aLex;
         currentToken = aLex.nextToken();
         symbolTable = SymbolTable.getInstance();
-        symbolTable.restartSymbomStructure();
+        symbolTable.reLoadSymbolTable();
         inicial();
+        symbolTable.checkClassesDeclarationAndConsolidationTable();
 
     }
 
@@ -173,7 +174,7 @@ public class SyntacticAnalyzer {
         String inheritanceClassName = "";
         if(Objects.equals("pr_extends", currentToken.getName())){
             match("pr_extends");
-            inheritanceClassName = currentToken.getName();
+            inheritanceClassName = currentToken.getLexeme();
             match("idClase");
             genericidad();
         }
@@ -314,7 +315,7 @@ public class SyntacticAnalyzer {
             return type;
         }
         else if(Objects.equals("idClase", currentToken.getName())) {
-            type = new TidClass(currentToken.getLexeme());
+            type = new TidClass(currentToken.getLexeme(),currentToken.getLineNumber());
             match("idClase");
             genericidad();
             return type;
@@ -327,22 +328,22 @@ public class SyntacticAnalyzer {
     private Type tipoPrimitivo() throws SyntacticErrorException, LexicalErrorException{
         Type type;
         if(Objects.equals("pr_boolean", currentToken.getName())){
-            type = new Tboolean("boolean");
+            type = new Tboolean("boolean",currentToken.getLineNumber());
             match("pr_boolean");
             return type;
         }
         else if(Objects.equals("pr_char", currentToken.getName())){
-            type = new Tchar("char");
+            type = new Tchar("char",currentToken.getLineNumber());
             match("pr_char");
             return type;
         }
         else if(Objects.equals("pr_int", currentToken.getName())){
-            type = new Tint("int");
+            type = new Tint("int",currentToken.getLineNumber());
             match("pr_int");
             return type;
         }
         else if(Objects.equals("pr_String", currentToken.getName())){
-            type = new TString("String");
+            type = new TString("String",currentToken.getLineNumber());
             match("pr_String");
             return type;
         }
@@ -399,7 +400,7 @@ public class SyntacticAnalyzer {
             return methodType;
         }
         else if(Objects.equals("pr_void", currentToken.getName())){
-            methodType = new Tvoid();
+            methodType = new Tvoid(currentToken.getLineNumber());
             match("pr_void");
             return methodType;
         }

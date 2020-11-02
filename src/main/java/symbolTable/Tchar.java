@@ -2,7 +2,8 @@ package symbolTable;
 
 public class Tchar extends Type {
 
-    public Tchar(String name){
+    public Tchar(String name,int ln){
+        this.lineNumber=ln;
         this.name = name;
     }
     @Override

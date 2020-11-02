@@ -106,13 +106,11 @@ public class Class extends Module{
         ancestors.add(name);
         checkCircularInheritance(ancestors,ancestor,SymbolTable.getInstance());
 
-        checkConstructorExistence();
-
         checkAttributesDeclaration();
 
+        checkConstructorExistenceAndCorrectDeclaration();
+
         checkMethodDeclaration();
-
-
 
     }
 
@@ -134,9 +132,12 @@ public class Class extends Module{
         }
     }
 
-    private void checkConstructorExistence() {
+    private void checkConstructorExistenceAndCorrectDeclaration() throws SemanticErrorException {
         if(constructor == null){
             constructor = new Constructor(name,0,this);
+        }
+        else {
+            constructor.checkConstructorParameterDeclaration();
         }
     }
 
@@ -172,7 +173,7 @@ public class Class extends Module{
         return attrs;
     }
 
-    private void checkMethodDeclaration() throws SemanticErrorException {
+    public void checkMethodDeclaration() throws SemanticErrorException {
         for (String method : orderOfMethods){
             myMethods.get(method).checkMethodTypeDeclaration();
         }

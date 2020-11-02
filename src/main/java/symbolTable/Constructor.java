@@ -23,6 +23,12 @@ public class Constructor extends Unit{
 
     }
 
+    public void checkConstructorParameterDeclaration() throws SemanticErrorException {
+        for(Parameter p: parameters){
+            p.checkTypeExistence(this);
+        }
+    }
+
 
 
 }
