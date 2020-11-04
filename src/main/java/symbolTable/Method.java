@@ -75,24 +75,5 @@ public class Method extends Unit{
         }
         return answer;
     }
-    /**
-
-    public void probe(){
-        for (Parameter p: parameters){
-            boolean sameParameter = false;
-            for (Parameter p2 : m2Parameters){
-                if(p2.getName().equals(p.getName()) &&
-                        p2.getType().getTypeName().equals(p.getType().getTypeName())){
-                    sameParameter = true;
-                    break;
-                }
-            }
-            if(!sameParameter) {
-                answer = false;
-                break;
-            }
-        }
-    }
-     **/
 
 }

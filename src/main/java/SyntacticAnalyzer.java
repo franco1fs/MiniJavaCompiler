@@ -354,7 +354,9 @@ public class SyntacticAnalyzer {
 
     private void listaDecAtrs(String visibility,Type type) throws SyntacticErrorException, LexicalErrorException,
             SemanticErrorException{
-        Attribute attribute = new Attribute(currentToken.getLexeme(),currentToken.getLineNumber(),type,visibility);
+        Attribute attribute = new Attribute(currentToken.getLexeme(),currentToken.getLineNumber(),
+                type,visibility,symbolTable.getCurrentModule().getName());
+
         match("idMetVar");
 
         Class currentClass = (Class) symbolTable.getCurrentModule();

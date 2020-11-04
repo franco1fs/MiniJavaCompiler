@@ -5,13 +5,19 @@ public class Attribute extends Entity{
     protected Type type;
     protected String visibility;
 
-    public Attribute(String name,int lineNumber,Type type,String visibility){
+    private String classWhereBelong;
+
+    public Attribute(String name,int lineNumber,Type type,String visibility,String classWhereBelong){
         this.name = name;
         this.lineNumber = lineNumber;
         this.type = type;
         this.visibility = visibility;
+        this.classWhereBelong = classWhereBelong;
     }
 
+    public String getClassWhereBelong(){
+        return classWhereBelong;
+    }
     public Type getType(){
         return type;
     }

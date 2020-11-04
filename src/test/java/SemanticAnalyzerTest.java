@@ -79,6 +79,7 @@ public class SemanticAnalyzerTest {
 
     static Stream<Arguments> args2() throws FileNotFoundException {
         return Stream.of(
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p8.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p9.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p10_attributes.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p11_atributes.txt")),
@@ -95,7 +96,13 @@ public class SemanticAnalyzerTest {
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p22_Metodos.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p23_HCorrect.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p24_MetSuperCorrect.txt")),
-                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p25_AllCorrect.txt"))
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p25_AllCorrect.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p26_main.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p27_RedefCorrect.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\Semantico\\p28_constructor.txt"))
+
+
+
 
 
 

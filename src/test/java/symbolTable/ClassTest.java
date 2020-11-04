@@ -87,13 +87,13 @@ class ClassTest {
         SymbolTable symbolTable ;
         symbolTable = SymbolTable.getInstance();
         try {
-            c1.insertAttribute(new Attribute("a1",1,new TString("String",1),""));
-            c1.insertAttribute(new Attribute("a2",1,new TString("String",1),""));
-            c1.insertAttribute(new Attribute("a3",1,new TString("String",1),""));
-            c2.insertAttribute(new Attribute("a4",1,new TString("String",1),""));
-            c2.insertAttribute(new Attribute("a5",1,new TString("String",1),""));
-            c3.insertAttribute(new Attribute("a6",1,new TString("String",1),""));
-            c3.insertAttribute(new Attribute("a1",1,new TString("String",1),""));
+            c1.insertAttribute(new Attribute("a1",1,new TString("String",1),"",""));
+            c1.insertAttribute(new Attribute("a2",1,new TString("String",1),"",""));
+            c1.insertAttribute(new Attribute("a3",1,new TString("String",1),"",""));
+            c2.insertAttribute(new Attribute("a4",1,new TString("String",1),"",""));
+            c2.insertAttribute(new Attribute("a5",1,new TString("String",1),"",""));
+            c3.insertAttribute(new Attribute("a6",1,new TString("String",1),"",""));
+            c3.insertAttribute(new Attribute("a1",1,new TString("String",1),"",""));
             symbolTable.insertClass(c1);
             symbolTable.insertClass(c2);
             symbolTable.insertClass(c3);
@@ -342,9 +342,9 @@ class ClassTest {
     public void insertAttributesTest(){
         Class clase = createClassObj();
         try {
-            Attribute attribute = new Attribute("a1",1,new Tint("int",1),"private");
-            Attribute attribute2 = new Attribute("a2",1,new Tint("int",1),"private");
-            Attribute attribute3 = new Attribute("a3",1,new Tint("int",1),"private");
+            Attribute attribute = new Attribute("a1",1,new Tint("int",1),"private","");
+            Attribute attribute2 = new Attribute("a2",1,new Tint("int",1),"private","");
+            Attribute attribute3 = new Attribute("a3",1,new Tint("int",1),"private","");
             clase.insertAttribute(attribute);
             clase.insertAttribute(attribute2);
             clase.insertAttribute(attribute3);
@@ -361,9 +361,9 @@ class ClassTest {
     public void insertAttributesAndThrowExceptionTest(){
         Class clase = createClassObj();
         try {
-            Attribute attribute = new Attribute("a1",1,new Tint("int",1),"private");
-            Attribute attribute2 = new Attribute("a2",1,new Tint("int",1),"private");
-            Attribute attribute3 = new Attribute("a2",1,new Tint("int",1),"private");
+            Attribute attribute = new Attribute("a1",1,new Tint("int",1),"private","");
+            Attribute attribute2 = new Attribute("a2",1,new Tint("int",1),"private","");
+            Attribute attribute3 = new Attribute("a2",1,new Tint("int",1),"private","");
             clase.insertAttribute(attribute);
             clase.insertAttribute(attribute2);
             clase.insertAttribute(attribute3);

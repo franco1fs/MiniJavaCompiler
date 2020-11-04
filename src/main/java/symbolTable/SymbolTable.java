@@ -120,11 +120,32 @@ public class SymbolTable {
     }
 
     public void checkClassesDeclarationAndConsolidationTable() throws SemanticErrorException{
+        ArrayList<Method> allMethods = new ArrayList<Method>();
         for (String c: orderOfClases){
             classes.get(c).checkCorrectDeclaration();
+            allMethods.addAll(classes.get(c).getMyMethods().values());
         }
-        //ChequearFor el Main
+        if(!noExistMainOrExistMoreThanOne(allMethods)){
+            throw new SemanticErrorException("main",0,"Error semantico en el programa debido al metodo main");
+        }
         }
 
+
+        private boolean noExistMainOrExistMoreThanOne(ArrayList<Method> allMethods){
+            boolean toRet = true;
+            int mainCount = 0;
+            Method method;
+            for (int i= 0 ; i<allMethods.size() && toRet; i++){
+                method = allMethods.get(i);
+                if(method.getName().equals("main") && method.getReturnType().getTypeName().equals("void") &&
+                    method.getParameters().size() == 0){
+                    mainCount++;
+                }
+                if(mainCount>1){
+                    toRet = false;
+                }
+            }
+            return toRet;
+        }
 }
 

@@ -1,9 +1,6 @@
 package symbolTable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 
 public class Class extends Module{
 
@@ -12,6 +9,12 @@ public class Class extends Module{
 
     private HashMap<String,Method> myMethods;
     private HashMap<String,Attribute> myAtributes;
+
+    //La idea de este mapeo es almacenar una tabla con el nombre de la clase Super
+    // y la lista de variables de instancia de esa clase que heredamos y al haber redefinido en nuestro modulo
+    //son tapadas
+    private HashMap<String,ArrayList<Attribute>> hideAttrs = new HashMap<String, ArrayList<Attribute>>();
+
 
     private Constructor constructor= null;
 
@@ -141,24 +144,35 @@ public class Class extends Module{
         }
     }
 
+
     public void checkAttributesDeclaration() throws SemanticErrorException {
         for (String attr : orderOfAttributes){
             myAtributes.get(attr).checkTypeExistence();
         }
+
+        attributesConsolidation();
+    }
+
+    private void attributesConsolidation() {
         Collection<Attribute> inheritanceAttr = getInheritanceAttr(ancestor);
 
         for (Attribute attr: inheritanceAttr){
             if(myAtributes.containsKey(attr.getName())){
-                throw new SemanticErrorException(attr.getName(),myAtributes.get(attr.getName()).getLineNumber(),
-                        "Error Semantico en la linea: "+myAtributes.get(attr.getName()).getLineNumber()+" el" +
-                        "atributo "+attr.getName()+" en la clase "+name+" " +
-                                "tiene el mismo nombre que un atributo de una clase Super");
+                if(!hideAttrs.containsKey(attr.getClassWhereBelong())){
+                    ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+                    attributes.add(attr);
+                    hideAttrs.put(attr.getClassWhereBelong(),attributes);
+                }
+                else{
+                    ArrayList<Attribute> allAttr = hideAttrs.get(attr.getClassWhereBelong());
+                    allAttr.add(attr);
+                    hideAttrs.put(attr.getClassWhereBelong(),allAttr);
+                }
             }
             else {
                 myAtributes.put(attr.getName(),attr);
             }
         }
-
     }
 
     private Collection<Attribute> getInheritanceAttr(String ancestor){
@@ -172,6 +186,7 @@ public class Class extends Module{
         }
         return attrs;
     }
+
 
     public void checkMethodDeclaration() throws SemanticErrorException {
         for (String method : orderOfMethods){

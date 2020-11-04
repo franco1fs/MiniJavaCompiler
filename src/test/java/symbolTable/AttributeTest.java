@@ -18,13 +18,13 @@ class AttributeTest {
         SymbolTable symbolTable ;
         symbolTable = SymbolTable.getInstance();
         try {
-            c1.insertAttribute(new Attribute("a1",1,new TString("String",1),""));
-            c1.insertAttribute(new Attribute("a2",1,new TString("String",1),""));
-            c1.insertAttribute(new Attribute("a3",1,new TidClass("No",1),""));
-            c2.insertAttribute(new Attribute("a4",1,new TString("String",1),""));
-            c2.insertAttribute(new Attribute("a5",1,new TString("String",1),""));
-            c3.insertAttribute(new Attribute("a6",1,new TString("String",1),""));
-            c3.insertAttribute(new Attribute("a1",1,new TString("String",1),""));
+            c1.insertAttribute(new Attribute("a1",1,new TString("String",1),"",""));
+            c1.insertAttribute(new Attribute("a2",1,new TString("String",1),"",""));
+            c1.insertAttribute(new Attribute("a3",1,new TidClass("No",1),"",""));
+            c2.insertAttribute(new Attribute("a4",1,new TString("String",1),"",""));
+            c2.insertAttribute(new Attribute("a5",1,new TString("String",1),"",""));
+            c3.insertAttribute(new Attribute("a6",1,new TString("String",1),"",""));
+            c3.insertAttribute(new Attribute("a1",1,new TString("String",1),"",""));
             symbolTable.insertClass(c1);
             symbolTable.insertClass(c2);
             symbolTable.insertClass(c3);
