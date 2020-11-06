@@ -1,3 +1,7 @@
+package lexicalAnalyzer;
+
+import lexicalAnalyzer.IFileManager;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

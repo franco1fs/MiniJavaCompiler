@@ -1,3 +1,7 @@
+package syntacticAnalyzer;
+
+import lexicalAnalyzer.Token;
+
 public class SyntacticErrorException extends Exception {
 
     private String expectedToken;

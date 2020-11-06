@@ -1,3 +1,5 @@
+package lexicalAnalyzer;
+
 public class LexicalErrorException extends Exception {
     private String lexeme;
     private int lineNumber;

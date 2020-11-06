@@ -1,3 +1,5 @@
+package lexicalAnalyzer;
+
 public class Token {
     private String name;
     private String lexeme;

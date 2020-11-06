@@ -1,3 +1,5 @@
+package lexicalAnalyzer;
+
 public class EndOfFileException extends Exception {
     private String lexeme;
     private int lineNumber;

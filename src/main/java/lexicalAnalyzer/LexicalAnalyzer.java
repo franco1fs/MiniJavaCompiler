@@ -1,3 +1,7 @@
+package lexicalAnalyzer;
+
+import lexicalAnalyzer.ILexicalAnalyzer;
+
 import java.util.*;
 
 public class LexicalAnalyzer implements ILexicalAnalyzer {
@@ -94,7 +98,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         return state_initial();
     }
     //Initial State
-    private Token state_initial() throws LexicalErrorException{
+    private Token state_initial() throws LexicalErrorException {
         if(endOfFile){
             return state_endOfFile();
         }
@@ -174,7 +178,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
     }
 
 
-    private Token state_possibleComment() throws LexicalErrorException{
+    private Token state_possibleComment() throws LexicalErrorException {
         if(currentChar == '/'){
             updateCurrentChar();
             return state_commentUntilEoL();
@@ -189,14 +193,14 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
     }
 
 
-    private Token state_commentUntilEoL() throws LexicalErrorException{
+    private Token state_commentUntilEoL() throws LexicalErrorException {
         while (currentChar != '\n'){
             updateCurrentChar();
         }
         return nextToken();
     }
 
-    private Token state_commentMultiLine() throws LexicalErrorException{
+    private Token state_commentMultiLine() throws LexicalErrorException {
         while (currentChar != '*' && !endOfFile){
             if(currentChar == '\n')
                 lineNumber++;
@@ -221,7 +225,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             return nextToken();
     }
 
-    private Token state_unallowedSymbol() throws LexicalErrorException{
+    private Token state_unallowedSymbol() throws LexicalErrorException {
         throw new LexicalErrorException("No es un simbolo válido",lexeme,lineNumber);
     }
 
@@ -235,7 +239,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         return new Token("EOF",lexeme,lineNumber);
     }
 
-    private Token state_idClass() throws LexicalErrorException{
+    private Token state_idClass() throws LexicalErrorException {
         if(Character.isLetter(currentChar) || Character.isDigit(currentChar) || currentChar == '_'){
             updateLexeme();
             updateCurrentChar();
@@ -249,7 +253,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         }
     }
 
-    private Token state_idVarMet() throws LexicalErrorException{
+    private Token state_idVarMet() throws LexicalErrorException {
         if(Character.isLetter(currentChar) || Character.isDigit(currentChar) || currentChar == '_'){
             updateLexeme();
             updateCurrentChar();
@@ -266,7 +270,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         }
     }
 
-    private Token state_literalInt() throws LexicalErrorException{
+    private Token state_literalInt() throws LexicalErrorException {
         if(Character.isDigit(currentChar)){
             updateLexeme();
             updateCurrentChar();
@@ -278,7 +282,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         }
     }
 
-    private Token state_literalChar() throws LexicalErrorException{
+    private Token state_literalChar() throws LexicalErrorException {
         if(currentChar == '\\'){
             updateLexeme();
             updateCurrentChar();
@@ -305,7 +309,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         }
     }
 
-    private Token state_checkSingleQuote() throws LexicalErrorException{
+    private Token state_checkSingleQuote() throws LexicalErrorException {
         if(currentChar == '\''){
             updateLexeme();
             updateCurrentChar();
@@ -333,7 +337,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
     private Token state_returnLiteralChar(){
         return  new Token("Literal char",lexeme,lineNumber);
     }
-    private Token state_literalString() throws LexicalErrorException{
+    private Token state_literalString() throws LexicalErrorException {
         if(endOfFile){
             throw new LexicalErrorException("Finalizo el archivo antes de cerrar el String",lexeme,lineNumber);
         }
@@ -353,7 +357,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         }
     }
 
-    private Token state_closeString() throws LexicalErrorException{
+    private Token state_closeString() throws LexicalErrorException {
         //lexeme.replace('"',' ');
         return new Token("Literal String",lexeme,lineNumber);
     }
@@ -375,7 +379,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
         }
     }
 
-    private Token state_waitForAmpersand() throws LexicalErrorException{
+    private Token state_waitForAmpersand() throws LexicalErrorException {
         if(currentChar == '&'){
             updateLexeme();
             updateCurrentChar();
@@ -385,7 +389,7 @@ public class LexicalAnalyzer implements ILexicalAnalyzer {
             throw new LexicalErrorException("Operador AND mal formado, falto agregar el segundo &",lexeme,lineNumber);
         }
     }
-    private Token state_waitForVerticalLine() throws LexicalErrorException{
+    private Token state_waitForVerticalLine() throws LexicalErrorException {
         if(currentChar == '|'){
             updateLexeme();
             updateCurrentChar();

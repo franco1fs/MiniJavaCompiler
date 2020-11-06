@@ -1,5 +1,10 @@
+import lexicalAnalyzer.FileManager;
+import lexicalAnalyzer.IFileManager;
+import lexicalAnalyzer.LexicalAnalyzer;
+import lexicalAnalyzer.LexicalErrorException;
 import symbolTable.SemanticErrorException;
-import symbolTable.SymbolTable;
+import syntacticAnalyzer.SyntacticAnalyzer;
+import syntacticAnalyzer.SyntacticErrorException;
 
 import java.io.FileNotFoundException;
 

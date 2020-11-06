@@ -1,4 +1,10 @@
+package syntacticAnalyzer;
+
 import java.util.*;
+
+import lexicalAnalyzer.LexicalAnalyzer;
+import lexicalAnalyzer.LexicalErrorException;
+import lexicalAnalyzer.Token;
 import symbolTable.*;
 import symbolTable.Class;
 
@@ -149,7 +155,7 @@ public class SyntacticAnalyzer {
         symbolTable.insertClass(clase);
     }
 
-    private void implementsInterfaces() throws  SyntacticErrorException, LexicalErrorException, SemanticErrorException {
+    private void implementsInterfaces() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
         if(Objects.equals("pr_implements",currentToken.getName())){
             match("pr_implements");
             match("idClase");
@@ -160,7 +166,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void restoInterfaces() throws SyntacticErrorException, LexicalErrorException , SyntacticErrorException{
+    private void restoInterfaces() throws SyntacticErrorException, LexicalErrorException , SyntacticErrorException {
         if(Objects.equals("Coma",currentToken.getName())){
             match("Coma");
             match("idClase");
@@ -250,7 +256,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void estatico() throws SyntacticErrorException, LexicalErrorException, SyntacticErrorException{
+    private void estatico() throws SyntacticErrorException, LexicalErrorException, SyntacticErrorException {
         if(Objects.equals("pr_static",currentToken.getName())){
             match("pr_static");
         }
@@ -473,7 +479,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void predictSentencePath () throws LexicalErrorException, SyntacticErrorException , SemanticErrorException{
+    private void predictSentencePath () throws LexicalErrorException, SyntacticErrorException, SemanticErrorException{
         nextToken = lexicalAnalyzer.nextToken();
         if(Objects.equals(nextToken.getName(),"idMetVar")){
             tipo();
