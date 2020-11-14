@@ -125,7 +125,7 @@ public class SymbolTable {
             classes.get(c).checkCorrectDeclaration();
             allMethods.addAll(classes.get(c).getMyMethods().values());
         }
-        if(!noExistMainOrExistMoreThanOne(allMethods)){
+        if(noExistMainOrExistMoreThanOne(allMethods)){
             throw new SemanticErrorException("main",0,"Error semantico en el programa debido al metodo main");
         }
         }
@@ -135,14 +135,18 @@ public class SymbolTable {
             boolean toRet = true;
             int mainCount = 0;
             Method method;
-            for (int i= 0 ; i<allMethods.size() && toRet; i++){
+            for (int i= 0 ; i<allMethods.size(); i++){
                 method = allMethods.get(i);
                 if(method.getName().equals("main") && method.getReturnType().getTypeName().equals("void") &&
                     method.getParameters().size() == 0){
                     mainCount++;
-                }
-                if(mainCount>1){
-                    toRet = false;
+                    if(mainCount==1){
+                        toRet = false;
+                    }
+                    if(mainCount>1){
+                        toRet = true;
+                        break;
+                    }
                 }
             }
             return toRet;

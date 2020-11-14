@@ -1,0 +1,10 @@
+package ast.sentence;
+
+import ast.sentence.SentenceNode;
+
+public class BlockNode extends SentenceNode {
+    @Override
+    public void check() {
+
+    }
+}

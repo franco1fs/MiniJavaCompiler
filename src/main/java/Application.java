@@ -33,11 +33,11 @@ public class Application {
                 }
                 catch (LexicalErrorException e){
                     System.out.println("Error Lexico en la linea "+e.getLineNumber()+":"+e.getMessage());
-                    System.out.println("[ERROR:"+e.getLexeme()+"|"+e.getLineNumber()+"]");
+                    System.out.println("[Error:"+e.getLexeme()+"|"+e.getLineNumber()+"]");
                 }
                 catch (SemanticErrorException e){
                     System.out.println(e.getMessage());
-                    System.out.println("[ERROR:"+e.getLexeme()+"|"+e.getLineNumber()+"]");
+                    System.out.println("[Error:"+e.getLexeme()+"|"+e.getLineNumber()+"]");
                 }
 
                  }

@@ -532,8 +532,10 @@ public class SyntacticAnalyzer {
         }
         else if(Objects.equals("pr_return", currentToken.getName())){
             match("pr_return");
+            //ExpressionNode exp = expresionOVacio();
             expresionOVacio();
             match("Punto y coma");
+            //return new ReturnNode(exp,table.getCurrentClass(),currentMethod);
         }
         else{
             throw new SyntacticErrorException(currentToken,"Punto y coma, pr_this, idMetVar, pr_static ,pr_new ," +
