@@ -1,10 +1,21 @@
 package ast.expression.operating;
 
 import ast.expression.operating.PrimaryNode;
+import symbolTable.Class;
+
+import java.beans.Expression;
+import java.util.ArrayList;
 
 public class AccessStaticNode extends PrimaryNode {
-    @Override
-    public void check() {
 
+    //private ArrayList<Expression> args = new ArrayList<Expression>();
+    private String idClass;
+    private AccessMethodNode accessMethodNode;
+
+    public AccessStaticNode(String idClass, AccessMethodNode accessMethodNode) {
+        this.idClass = idClass;
+        this.accessMethodNode = accessMethodNode;
     }
+
+
 }

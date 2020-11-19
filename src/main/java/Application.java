@@ -7,10 +7,12 @@ import syntacticAnalyzer.SyntacticAnalyzer;
 import syntacticAnalyzer.SyntacticErrorException;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class Application {
     public static void main (String args[]){
 
+        /**
         String fileName;
 
         if(args.length == 1){
@@ -50,6 +52,7 @@ public class Application {
         else{
             System.out.println("La cantidad de argumentos es INVALIDA, falta agregar la ruta del archivo de entrada");
         }
+         **/
 
     }
 

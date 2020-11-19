@@ -1,8 +1,16 @@
 package ast.expression.operating;
 
-import ast.expression.operating.OperatingNode;
+import symbolTable.Type;
 
-public class LiteralNode extends OperatingNode {
+public class LiteralNode extends OperantNode {
+    private Type type;
+    private String value;
+
+    public LiteralNode(Type type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
     @Override
     public void check() {
 

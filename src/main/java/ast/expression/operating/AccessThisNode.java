@@ -2,10 +2,7 @@ package ast.expression.operating;
 
 import ast.expression.operating.AccessNode;
 
-public class AccessThisNode extends AccessNode {
+public class AccessThisNode extends PrimaryNode {
 
-    @Override
-    public void check() {
 
-    }
 }

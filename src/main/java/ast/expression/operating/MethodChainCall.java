@@ -1,21 +1,17 @@
 package ast.expression.operating;
 
 import ast.expression.ExpressionNode;
-import ast.expression.operating.PrimaryNode;
-import symbolTable.Class;
+import symbolTable.Module;
 
 import java.util.ArrayList;
 
-public class AccessMethodNode extends PrimaryNode {
+public class MethodChainCall extends ChainCall{
 
     private ArrayList<ExpressionNode> args = new ArrayList<ExpressionNode>();
     private String methodName;
-    private Class myClass;
 
-    public AccessMethodNode(ArrayList<ExpressionNode> args, String methodName, Class myClass) {
+    public MethodChainCall(ArrayList<ExpressionNode> args, String methodName) {
         this.args = args;
         this.methodName = methodName;
-        this.myClass = myClass;
     }
-
 }
