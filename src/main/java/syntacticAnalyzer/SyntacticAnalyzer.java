@@ -6,6 +6,7 @@ import ast.expression.BinaryExpressionNode;
 import ast.expression.ExpressionNode;
 import ast.expression.UnaryExpressionNode;
 import ast.expression.operating.*;
+import ast.sentence.*;
 import lexicalAnalyzer.LexicalAnalyzer;
 import lexicalAnalyzer.LexicalErrorException;
 import lexicalAnalyzer.Token;
@@ -280,7 +281,7 @@ public class SyntacticAnalyzer {
         Method method = new Method(methodName,currentClass,methodType,methodForm,lineNumber);
         currentClass.setCurrentUnit(method);
         argsFormales();
-        bloque();
+        bloque(null);
 
         currentClass.insertMethod(method);
     }
@@ -297,7 +298,7 @@ public class SyntacticAnalyzer {
 
         genericidad();
         argsFormales();
-        bloque();
+        bloque(null);
         currentClass.insertConstructor(c);
     }
 
@@ -463,36 +464,50 @@ public class SyntacticAnalyzer {
         unit.insertParameter(parameter);
     }
 
-    private void bloque() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+    private BlockNode bloque(BlockNode fatherBlock) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        int lineNumber= currentToken.getLineNumber();
+        Class currentClass = (Class) symbolTable.getCurrentModule();
+        BlockNode blockNode = new BlockNode(fatherBlock, currentClass.getCurrentUnit());
         match("Llave abre");
-        listaSentencias();
+        ArrayList<SentenceNode> sentenceNodes= new ArrayList<SentenceNode>();
+        listaSentencias(sentenceNodes,blockNode);
         match("Llave cierra");
+        blockNode.setSentences(sentenceNodes);
+
+        return blockNode;
+
     }
 
-    private void listaSentencias() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+    private void listaSentencias(ArrayList<SentenceNode> sentenceNodes,BlockNode fatherBlock)
+            throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         List<String> firstOfSentence = Arrays.asList("idClase","pr_boolean","pr_char","pr_int","pr_String",
                 "Llave abre","Punto y coma","pr_if","pr_while","pr_return",
                 "pr_this","idMetVar","pr_static","pr_new","Parentesis abre");
 
         if(firstOfSentence.contains(currentToken.getName())){
-            sentencia();
-            listaSentencias();
+            SentenceNode sentenceNode = sentencia(fatherBlock);
+            sentenceNodes.add(sentenceNode);
+            listaSentencias(sentenceNodes,fatherBlock);
         }
         else{
             //listaSentencias -> e
         }
     }
 
-    private void predictSentencePath () throws LexicalErrorException, SyntacticErrorException, SemanticErrorException{
+    private SentenceNode predictSentencePath () throws LexicalErrorException, SyntacticErrorException, SemanticErrorException{
         nextToken = lexicalAnalyzer.nextToken();
         if(Objects.equals(nextToken.getName(),"idMetVar")){
-            tipo();
-            listaDecVars();
+            Type type = tipo();
+            ArrayList<String> vars = new ArrayList<String>();
+            listaDecVars(vars);
             match("Punto y coma");
+            DecVarsNode decVarsNode = new DecVarsNode(vars,type);
+            return decVarsNode;
         }
         else if(Arrays.asList("Operador menor","Punto").contains(nextToken.getName())){
-            asignacionOLlamada();
+            SentenceNode sentenceNode = asignacionOLlamada();
             match("Punto y coma");
+            return sentenceNode;
         }
         else{
             throw new SyntacticErrorException(nextToken,"Esperaba un acceso estático o lista de Variables");
@@ -500,99 +515,137 @@ public class SyntacticAnalyzer {
     }
 
 
-    private void sentencia() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+    private SentenceNode sentencia(BlockNode fatherBlock) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        int lineNumber;
+        lineNumber = currentToken.getLineNumber();
         if(Objects.equals("Punto y coma", currentToken.getName())){
             match("Punto y coma");
+            SemicolonNode semicolonNode = new SemicolonNode();
+            semicolonNode.setLineNumber(lineNumber);
+
+            return semicolonNode;
         }
         else if(Arrays.asList("pr_this","idMetVar","pr_static","pr_new","Parentesis abre").contains(currentToken.getName())){
-            asignacionOLlamada();
+            SentenceNode sentenceNode = asignacionOLlamada();
             match("Punto y coma");
+            sentenceNode.setLineNumber(lineNumber);
+
+            return sentenceNode;
         }
         else if(Arrays.asList("pr_boolean","pr_char","pr_int","pr_String").contains(currentToken.getName())){
-            tipo();
-            listaDecVars();
+            Type type = tipo();
+            ArrayList<String> vars = new ArrayList<String>();
+            listaDecVars(vars);
             match("Punto y coma");
+            DecVarsNode decVarsNode = new DecVarsNode(vars,type);
+            decVarsNode.setLineNumber(lineNumber);
+
+            return decVarsNode;
         }
         else if (Objects.equals("idClase", currentToken.getName())){
-            predictSentencePath();
+            SentenceNode sentenceNode = predictSentencePath();
+            sentenceNode.setLineNumber(lineNumber);
+
+            return sentenceNode;
         }
         else if(Objects.equals("pr_if", currentToken.getName())){
             match("pr_if");
             match("Parentesis abre");
-            expresion();
+            ExpressionNode expressionNode = expresion();
             match("Parentesis cierra");
-            sentencia();
-            restoSentenciaElseOVacio();
+            SentenceNode sentenceIfNode=sentencia(fatherBlock);
+            SentenceNode sentenceElseNode = restoSentenciaElseOVacio(fatherBlock);
+            IfElseNode ifElseNode = new IfElseNode(expressionNode,sentenceIfNode,sentenceElseNode);
+            ifElseNode.setLineNumber(lineNumber);
+
+            return ifElseNode;
         }
         else if(Objects.equals("pr_while", currentToken.getName())){
             match("pr_while");
             match("Parentesis abre");
-            expresion();
+            ExpressionNode expressionNode = expresion();
             match("Parentesis cierra");
-            sentencia();
+            SentenceNode sentenceNode=sentencia(fatherBlock);
+            WhileNode whileNode = new WhileNode(expressionNode,sentenceNode);
+            whileNode.setLineNumber(lineNumber);
+
+            return whileNode;
         }
         else if(Objects.equals("Llave abre", currentToken.getName())){
-            bloque();
+            return bloque(fatherBlock);
+
         }
         else if(Objects.equals("pr_return", currentToken.getName())){
             match("pr_return");
-            //ExpressionNode exp = expresionOVacio();
-            expresionOVacio();
+            ExpressionNode expressionNode = expresionOVacio();
             match("Punto y coma");
-            //return new ReturnNode(exp,table.getCurrentClass(),currentMethod);
+            Class currentClass = (Class) symbolTable.getCurrentModule();
+            return new ReturnNode(expressionNode, currentClass,currentClass.getCurrentUnit());
         }
         else{
             throw new SyntacticErrorException(currentToken,"Punto y coma, pr_this, idMetVar, pr_static ,pr_new ," +
                     "Parentesis abre, pr_if, idClase, pr_boolean, pr_char, pr_int, pr_String, pr_while, Llave abre, pr_return");
         }
     }
-    private void restoSentenciaElseOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+    private SentenceNode restoSentenciaElseOVacio(BlockNode fatherBlock) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("pr_else", currentToken.getName())){
             match("pr_else");
-            sentencia();
+            return sentencia(fatherBlock);
         }
         else{
             // -> e
+            return null;
         }
     }
 
-    private void asignacionOLlamada() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
-        acceso();
-        restoAsignacionOVacio();
+    private SentenceNode asignacionOLlamada() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
+        int lineNumber = currentToken.getLineNumber();
+        AccessNode accessNode = acceso();
+        SentenceNode sentenceNode = restoAsignacionOVacio(accessNode);
+        sentenceNode.setLineNumber(lineNumber);
+        return sentenceNode;
     }
-    private void restoAsignacionOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+    private SentenceNode restoAsignacionOVacio(AccessNode accessNode) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Arrays.asList("Asignacion","Asignacion +","Asignacion -").contains(currentToken.getName())){
-            tipoDeAsignacion();
-            expresion();
+            String assignmentType=tipoDeAsignacion();
+            ExpressionNode expressionNode=expresion();
+            return new AssignmentNode(accessNode,expressionNode,assignmentType);
         }
         else{
             // -> e
+            return new CallNode(accessNode);
         }
     }
-    private void tipoDeAsignacion() throws SyntacticErrorException, LexicalErrorException{
+    private String tipoDeAsignacion() throws SyntacticErrorException, LexicalErrorException{
+        String assignmentType;
+        assignmentType = currentToken.getLexeme();
         if (Objects.equals("Asignacion", currentToken.getName())) {
             match("Asignacion");
+            return assignmentType;
         }
         else if (Objects.equals("Asignacion +", currentToken.getName())){
             match("Asignacion +");
+            return assignmentType;
         }
         else if (Objects.equals("Asignacion -", currentToken.getName())){
             match("Asignacion -");
+            return assignmentType;
         }
         else{
             throw new SyntacticErrorException(currentToken,"Asignacion, Asignacion + o Asignacion -");
         }
     }
-    private void listaDecVars() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
+    private void listaDecVars(ArrayList<String> vars) throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
+        vars.add(currentToken.getLexeme());
         match("idMetVar");
         asignacionOVacio();
-        restoListaVarsOVacio();
+        restoListaVarsOVacio(vars);
     }
 
-    private void restoListaVarsOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+    private void restoListaVarsOVacio(ArrayList<String> vars) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("Coma", currentToken.getName())) {
             match("Coma");
-            listaDecVars();
+            listaDecVars(vars);
         }
         else{
             // -> e
@@ -609,16 +662,17 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void expresionOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
+    private ExpressionNode expresionOVacio() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException {
         List<String> firstOfExpOrEmp = Arrays.asList("pr_this","idMetVar","pr_static","pr_new","Parentesis abre",
                 "Operador suma","Operador resta","Operador not",
                 "pr_null","pr_true","pr_false","Literal int","Literal char","Literal String");
 
         if(firstOfExpOrEmp.contains(currentToken.getName())){
-            expresion();
+            return expresion();
         }
         else{
             // -> e
+            return null;
         }
     }
 
@@ -789,8 +843,7 @@ public class SyntacticAnalyzer {
             return literal();
         }
         else if(Arrays.asList("pr_this","idMetVar","pr_static","idClase","pr_new","Parentesis abre").contains(currentToken.getName())){
-            acceso();
-            return null;
+            return acceso();
         }
         else{
              throw new SyntacticErrorException(currentToken," pr_null, pr_true, pr_false, Literal int, " +
@@ -798,15 +851,15 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void acceso() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
+    private AccessNode acceso() throws SyntacticErrorException,LexicalErrorException, SemanticErrorException{
         PrimaryNode primaryNode = primario();
         ArrayList<ChainCall> chainCallArrayList = new ArrayList<ChainCall>();
         encadenado(chainCallArrayList);
         ChainCallContainer chainCallContainer = new ChainCallContainer(chainCallArrayList,
                 SymbolTable.getInstance().getCurrentModule());
 
-        // Ver que hago con el accessNodee ------- *** ------
-        AccessNode accessNode = new AccessNode(primaryNode,chainCallContainer);
+
+        return new AccessNode(primaryNode,chainCallContainer);
 
 
     }
@@ -850,22 +903,25 @@ public class SyntacticAnalyzer {
     }
 
     private AccessThisNode accesoThis() throws SyntacticErrorException, LexicalErrorException{
+        int lineNumber = currentToken.getLineNumber();
         match("pr_this");
-        return new AccessThisNode();
+        return new AccessThisNode(lineNumber);
     }
 
     private AccessVarNode accesoVar() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        int lineNumber = currentToken.getLineNumber();
         String var = currentToken.getLexeme();
         match("idMetVar");
-        return new AccessVarNode(var);
+        return new AccessVarNode(var,lineNumber);
     }
 
     private AccessMethodNode accesoMetodo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        int lineNumber = currentToken.getLineNumber();
         String method = currentToken.getLexeme();
         match("idMetVar");
         //Tomar la lista que devuelve args actuales y agregarla al constructor de retorno
         ArrayList<ExpressionNode> args = argsActuales();
-        return new AccessMethodNode(args,method,(Class) symbolTable.getCurrentModule());
+        return new AccessMethodNode(args,method,(Class) symbolTable.getCurrentModule(),lineNumber);
     }
 
     /**
@@ -889,6 +945,7 @@ public class SyntacticAnalyzer {
     private AccessStaticNode accesoEstatico() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         String idClass;
         AccessMethodNode accessMethodNode;
+        int lineNumber = currentToken.getLineNumber();
         if(Objects.equals("pr_static",currentToken.getName())) {
             match("pr_static");
             idClass = currentToken.getLexeme();
@@ -903,7 +960,7 @@ public class SyntacticAnalyzer {
         else {
             throw new SyntacticErrorException(currentToken,"Esperaba un acceso Estatico");
         }
-        return new AccessStaticNode(idClass,accessMethodNode);
+        return new AccessStaticNode(idClass,accessMethodNode,lineNumber);
 
     }
 
@@ -913,11 +970,12 @@ public class SyntacticAnalyzer {
         return accesoMetodo();
     }
     private AccessConstructorNode accesoConstructor() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+        int lineNumber = currentToken.getLineNumber();
         match("pr_new");
         match("idClase");
         genericidadConstructor();
         ArrayList<ExpressionNode> args = argsActuales();
-        return new AccessConstructorNode(args,(Class) symbolTable.getCurrentModule());
+        return new AccessConstructorNode(args,(Class) symbolTable.getCurrentModule(),lineNumber);
     }
 
     private void genericidadConstructor() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
@@ -998,13 +1056,14 @@ public class SyntacticAnalyzer {
     private ChainCall idEncadenado() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         match("Punto");
         String idMetVar = currentToken.getLexeme();
+        int lineNumber = currentToken.getLineNumber();
         match("idMetVar");
         ArrayList<ExpressionNode> args = argsActualesOVacio();
         if(args==null){
-            return new VarChainCall(idMetVar);
+            return new VarChainCall(idMetVar,lineNumber);
         }
         else {
-            return new MethodChainCall(args,idMetVar);
+            return new MethodChainCall(args,idMetVar,lineNumber);
         }
     }
 

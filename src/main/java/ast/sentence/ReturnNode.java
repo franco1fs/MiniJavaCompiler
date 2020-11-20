@@ -3,22 +3,27 @@ package ast.sentence;
 import ast.expression.ExpressionNode;
 import ast.sentence.SentenceNode;
 import symbolTable.Class;
+import symbolTable.Method;
+import symbolTable.Unit;
 
 public class ReturnNode extends SentenceNode {
     private ExpressionNode returnExpression;
     private Class myClass;
-    private String myMethod;
+    private Unit unitWhereBelong;
 
-    public ReturnNode(ExpressionNode returnExpression, Class myClass, String myMethod) {
+    public ReturnNode(ExpressionNode returnExpression, Class myClass, Unit myUnit) {
         this.returnExpression = returnExpression;
         this.myClass = myClass;
-        this.myMethod = myMethod;
+        this.unitWhereBelong = myUnit;
     }
 
 
     @Override
     public void check() {
-
+        //if(InstanceOf(Constructor)) -- > Error (Constructor no puede tener return)
+        //else{
+        // Casteo a Method y comienzo a chequear
+        // }
     }
 
     public void setReturnExpression(ExpressionNode returnExpression) {
@@ -29,8 +34,8 @@ public class ReturnNode extends SentenceNode {
         this.myClass = myClass;
     }
 
-    public void setMyMethod(String myMethod) {
-        this.myMethod = myMethod;
+    public void setMyMethod(Unit unit) {
+        this.unitWhereBelong= unit;
     }
 
     public ExpressionNode getReturnExpression() {
@@ -41,8 +46,8 @@ public class ReturnNode extends SentenceNode {
         return myClass;
     }
 
-    public String getMyMethod() {
-        return myMethod;
+    public Unit getMyMethod() {
+        return unitWhereBelong;
     }
 
 

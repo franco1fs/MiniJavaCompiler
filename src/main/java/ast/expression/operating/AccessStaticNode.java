@@ -12,10 +12,15 @@ public class AccessStaticNode extends PrimaryNode {
     private String idClass;
     private AccessMethodNode accessMethodNode;
 
-    public AccessStaticNode(String idClass, AccessMethodNode accessMethodNode) {
+    public AccessStaticNode(String idClass, AccessMethodNode accessMethodNode,int lineNumber) {
         this.idClass = idClass;
         this.accessMethodNode = accessMethodNode;
+        this.lineNumber = lineNumber;
     }
 
 
+    @Override
+    public void check() {
+
+    }
 }
