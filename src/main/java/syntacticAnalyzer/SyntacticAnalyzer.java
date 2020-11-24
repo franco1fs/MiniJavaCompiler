@@ -281,8 +281,8 @@ public class SyntacticAnalyzer {
         Method method = new Method(methodName,currentClass,methodType,methodForm,lineNumber);
         currentClass.setCurrentUnit(method);
         argsFormales();
-        bloque(null);
-
+        BlockNode blockNode = bloque(null);
+        method.setMyBlock(blockNode);
         currentClass.insertMethod(method);
     }
 
@@ -298,7 +298,8 @@ public class SyntacticAnalyzer {
 
         genericidad();
         argsFormales();
-        bloque(null);
+        BlockNode blockNode = bloque(null);
+        c.setMyBlock(blockNode);
         currentClass.insertConstructor(c);
     }
 
@@ -468,6 +469,7 @@ public class SyntacticAnalyzer {
         int lineNumber= currentToken.getLineNumber();
         Class currentClass = (Class) symbolTable.getCurrentModule();
         BlockNode blockNode = new BlockNode(fatherBlock, currentClass.getCurrentUnit());
+        symbolTable.setCurrentBlock(blockNode);
         match("Llave abre");
         ArrayList<SentenceNode> sentenceNodes= new ArrayList<SentenceNode>();
         listaSentencias(sentenceNodes,blockNode);
@@ -494,14 +496,15 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private SentenceNode predictSentencePath () throws LexicalErrorException, SyntacticErrorException, SemanticErrorException{
+    private SentenceNode predictSentencePath (BlockNode myBlock) throws LexicalErrorException, SyntacticErrorException, SemanticErrorException{
         nextToken = lexicalAnalyzer.nextToken();
+        Class currentClass = (Class) symbolTable.getCurrentModule();
         if(Objects.equals(nextToken.getName(),"idMetVar")){
             Type type = tipo();
             ArrayList<String> vars = new ArrayList<String>();
             listaDecVars(vars);
             match("Punto y coma");
-            DecVarsNode decVarsNode = new DecVarsNode(vars,type);
+            DecVarsNode decVarsNode = new DecVarsNode(vars,type,myBlock);
             return decVarsNode;
         }
         else if(Arrays.asList("Operador menor","Punto").contains(nextToken.getName())){
@@ -515,9 +518,10 @@ public class SyntacticAnalyzer {
     }
 
 
-    private SentenceNode sentencia(BlockNode fatherBlock) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
+    private SentenceNode sentencia(BlockNode myBlock) throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         int lineNumber;
         lineNumber = currentToken.getLineNumber();
+        Class currentClass = (Class) symbolTable.getCurrentModule();
         if(Objects.equals("Punto y coma", currentToken.getName())){
             match("Punto y coma");
             SemicolonNode semicolonNode = new SemicolonNode();
@@ -537,13 +541,13 @@ public class SyntacticAnalyzer {
             ArrayList<String> vars = new ArrayList<String>();
             listaDecVars(vars);
             match("Punto y coma");
-            DecVarsNode decVarsNode = new DecVarsNode(vars,type);
+            DecVarsNode decVarsNode = new DecVarsNode(vars,type,myBlock);
             decVarsNode.setLineNumber(lineNumber);
 
             return decVarsNode;
         }
         else if (Objects.equals("idClase", currentToken.getName())){
-            SentenceNode sentenceNode = predictSentencePath();
+            SentenceNode sentenceNode = predictSentencePath(myBlock);
             sentenceNode.setLineNumber(lineNumber);
 
             return sentenceNode;
@@ -553,8 +557,8 @@ public class SyntacticAnalyzer {
             match("Parentesis abre");
             ExpressionNode expressionNode = expresion();
             match("Parentesis cierra");
-            SentenceNode sentenceIfNode=sentencia(fatherBlock);
-            SentenceNode sentenceElseNode = restoSentenciaElseOVacio(fatherBlock);
+            SentenceNode sentenceIfNode=sentencia(myBlock);
+            SentenceNode sentenceElseNode = restoSentenciaElseOVacio(myBlock);
             IfElseNode ifElseNode = new IfElseNode(expressionNode,sentenceIfNode,sentenceElseNode);
             ifElseNode.setLineNumber(lineNumber);
 
@@ -565,21 +569,20 @@ public class SyntacticAnalyzer {
             match("Parentesis abre");
             ExpressionNode expressionNode = expresion();
             match("Parentesis cierra");
-            SentenceNode sentenceNode=sentencia(fatherBlock);
+            SentenceNode sentenceNode=sentencia(myBlock);
             WhileNode whileNode = new WhileNode(expressionNode,sentenceNode);
             whileNode.setLineNumber(lineNumber);
 
             return whileNode;
         }
         else if(Objects.equals("Llave abre", currentToken.getName())){
-            return bloque(fatherBlock);
+            return bloque(myBlock);
 
         }
         else if(Objects.equals("pr_return", currentToken.getName())){
             match("pr_return");
             ExpressionNode expressionNode = expresionOVacio();
             match("Punto y coma");
-            Class currentClass = (Class) symbolTable.getCurrentModule();
             return new ReturnNode(expressionNode, currentClass,currentClass.getCurrentUnit());
         }
         else{
@@ -806,7 +809,7 @@ public class SyntacticAnalyzer {
     private LiteralNode literal() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         if(Objects.equals("pr_null", currentToken.getName())){
             match("pr_null");
-            return new LiteralNode(null,"");
+            return new LiteralNode(new Tnull("null",currentToken.getLineNumber()),"null");
         }
         else if(Objects.equals("pr_true", currentToken.getName())){
             match("pr_true");
@@ -905,14 +908,15 @@ public class SyntacticAnalyzer {
     private AccessThisNode accesoThis() throws SyntacticErrorException, LexicalErrorException{
         int lineNumber = currentToken.getLineNumber();
         match("pr_this");
-        return new AccessThisNode(lineNumber);
+        Class classe = (Class) symbolTable.getCurrentModule();
+        return new AccessThisNode(lineNumber,(Method) classe.getCurrentUnit());
     }
 
     private AccessVarNode accesoVar() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         int lineNumber = currentToken.getLineNumber();
         String var = currentToken.getLexeme();
         match("idMetVar");
-        return new AccessVarNode(var,lineNumber);
+        return new AccessVarNode(var,lineNumber,symbolTable.getCurrentBlock());
     }
 
     private AccessMethodNode accesoMetodo() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{

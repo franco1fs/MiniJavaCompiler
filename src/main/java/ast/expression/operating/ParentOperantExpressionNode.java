@@ -1,7 +1,8 @@
 package ast.expression.operating;
 
 import ast.expression.ExpressionNode;
-import ast.expression.operating.PrimaryNode;
+import symbolTable.MethodType;
+import symbolTable.SemanticErrorException;
 
 public class ParentOperantExpressionNode extends PrimaryNode {
     private ExpressionNode expressionNode;
@@ -10,8 +11,7 @@ public class ParentOperantExpressionNode extends PrimaryNode {
         this.expressionNode = expressionNode;
         this.lineNumber = lineNumber;
     }
-    @Override
-    public void check() {
-
+    public MethodType check() throws SemanticErrorException {
+        return null;
     }
 }

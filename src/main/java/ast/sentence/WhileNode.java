@@ -1,7 +1,7 @@
 package ast.sentence;
 
 import ast.expression.ExpressionNode;
-import ast.sentence.SentenceNode;
+import symbolTable.SemanticErrorException;
 
 public class WhileNode extends SentenceNode {
     private ExpressionNode expressionNode;
@@ -13,7 +13,7 @@ public class WhileNode extends SentenceNode {
     }
 
     @Override
-    public void check() {
+    public void check() throws SemanticErrorException {
 
     }
 }

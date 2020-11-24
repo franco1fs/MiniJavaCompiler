@@ -10,4 +10,6 @@ public abstract class Type extends MethodType{
     public int getLineNumber(){
         return lineNumber;
     }
+
+
 }

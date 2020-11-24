@@ -1,5 +1,7 @@
 package symbolTable;
 
+import ast.sentence.BlockNode;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +12,8 @@ public class SymbolTable {
     private HashMap<String,Class> classes;
     private Module currentModule;
     private ArrayList<String> orderOfClases = new ArrayList<String>();
+
+    private BlockNode currentBlock;
 
 
     public static SymbolTable getInstance(){
@@ -130,7 +134,6 @@ public class SymbolTable {
         }
         }
 
-
         private boolean noExistMainOrExistMoreThanOne(ArrayList<Method> allMethods){
             boolean toRet = true;
             int mainCount = 0;
@@ -150,6 +153,17 @@ public class SymbolTable {
                 }
             }
             return toRet;
+        }
+
+        public void setCurrentBlock(BlockNode blockNode){
+            this.currentBlock = blockNode;
+        }
+        public BlockNode getCurrentBlock(){
+            return  currentBlock;
+        }
+
+        public Class getClass(String className){
+            return classes.get(className);
         }
 }
 

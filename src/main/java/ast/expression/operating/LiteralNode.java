@@ -1,5 +1,7 @@
 package ast.expression.operating;
 
+import symbolTable.MethodType;
+import symbolTable.SemanticErrorException;
 import symbolTable.Type;
 
 public class LiteralNode extends OperantNode {
@@ -11,8 +13,7 @@ public class LiteralNode extends OperantNode {
         this.value = value;
     }
 
-    @Override
-    public void check() {
-
+    public MethodType check() throws SemanticErrorException {
+        return type;
     }
 }

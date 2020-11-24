@@ -1,6 +1,7 @@
 package ast.expression.operating;
 
-import ast.expression.operating.PrimaryNode;
+import symbolTable.MethodType;
+import symbolTable.SemanticErrorException;
 
 public class AccessNode extends OperantNode {
     private PrimaryNode primaryNode;
@@ -11,8 +12,7 @@ public class AccessNode extends OperantNode {
         this.chainCallContainer = chainCallContainer;
     }
 
-    @Override
-    public void check() {
-
+    public MethodType check() throws SemanticErrorException {
+        return null;
     }
 }

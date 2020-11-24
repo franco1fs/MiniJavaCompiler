@@ -8,5 +8,7 @@ public abstract class MethodType {
 
     public abstract int getLineNumber();
 
+    public abstract boolean isConformedBy(MethodType type);
+
 }
 

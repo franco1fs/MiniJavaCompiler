@@ -1,8 +1,7 @@
 package ast.sentence;
 
-import ast.expression.operating.AccessConstructorNode;
 import ast.expression.operating.AccessNode;
-import ast.sentence.SentenceNode;
+import symbolTable.SemanticErrorException;
 
 public class CallNode extends SentenceNode {
 
@@ -13,7 +12,7 @@ public class CallNode extends SentenceNode {
     }
 
     @Override
-    public void check() {
+    public void check() throws SemanticErrorException {
 
     }
 }

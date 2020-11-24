@@ -15,6 +15,12 @@ public class Tvoid extends MethodType {
     public int getLineNumber(){
         return lineNumber;
     }
+
+    @Override
+    public boolean isConformedBy(MethodType type) {
+        return false;
+    }
+
     public String getTypeName(){
         return "void";
     }

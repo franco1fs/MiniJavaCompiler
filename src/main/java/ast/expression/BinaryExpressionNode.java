@@ -1,6 +1,7 @@
 package ast.expression;
 
-import ast.expression.ExpressionNode;
+import symbolTable.MethodType;
+import symbolTable.SemanticErrorException;
 
 public class BinaryExpressionNode extends ExpressionNode {
 
@@ -14,8 +15,7 @@ public class BinaryExpressionNode extends ExpressionNode {
         this.binaryOperator = binaryOperator;
     }
 
-    @Override
-    public void check() {
-
+    public MethodType check() throws SemanticErrorException {
+        return null;
     }
 }

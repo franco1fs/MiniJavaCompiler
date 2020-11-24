@@ -1,10 +1,26 @@
 package symbolTable;
 
+import ast.sentence.BlockNode;
+
 import java.util.ArrayList;
 
 public class Unit extends Entity {
     protected Module myModule;
     protected ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+    private BlockNode myBlock;
+
+
+    public void setMyBlock(BlockNode myBlock) {
+        this.myBlock = myBlock;
+    }
+
+    public Module getMyModule() {
+        return myModule;
+    }
+
+    public BlockNode getMyBlock() {
+        return myBlock;
+    }
 
     //Agregar el metodo que permita cargar parametros a la lista de parametros
     // public void addParameterAndCheckRepeatName(...) throw SemanticExc...
@@ -27,4 +43,6 @@ public class Unit extends Entity {
     public ArrayList<Parameter> getParameters(){
         return parameters;
     }
+
+
 }

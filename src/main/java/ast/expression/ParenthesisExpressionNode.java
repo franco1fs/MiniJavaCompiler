@@ -1,11 +1,12 @@
 package ast.expression;
 
-import ast.expression.ExpressionNode;
+import symbolTable.MethodType;
+import symbolTable.SemanticErrorException;
 
 
 public class ParenthesisExpressionNode extends ExpressionNode {
-    @Override
-    public void check() {
 
+    public MethodType check() throws SemanticErrorException {
+        return null;
     }
 }

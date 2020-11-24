@@ -1,7 +1,7 @@
 package ast.sentence;
 
 import ast.expression.ExpressionNode;
-import ast.sentence.SentenceNode;
+import symbolTable.SemanticErrorException;
 
 public class IfElseNode extends SentenceNode {
 
@@ -16,7 +16,7 @@ public class IfElseNode extends SentenceNode {
     }
 
     @Override
-    public void check() {
+    public void check() throws SemanticErrorException {
 
     }
 }

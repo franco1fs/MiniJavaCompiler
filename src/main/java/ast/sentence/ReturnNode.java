@@ -1,9 +1,8 @@
 package ast.sentence;
 
 import ast.expression.ExpressionNode;
-import ast.sentence.SentenceNode;
 import symbolTable.Class;
-import symbolTable.Method;
+import symbolTable.SemanticErrorException;
 import symbolTable.Unit;
 
 public class ReturnNode extends SentenceNode {
@@ -19,7 +18,7 @@ public class ReturnNode extends SentenceNode {
 
 
     @Override
-    public void check() {
+    public void check() throws SemanticErrorException {
         //if(InstanceOf(Constructor)) -- > Error (Constructor no puede tener return)
         //else{
         // Casteo a Method y comienzo a chequear

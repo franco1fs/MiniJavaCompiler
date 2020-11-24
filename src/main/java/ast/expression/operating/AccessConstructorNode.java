@@ -1,8 +1,9 @@
 package ast.expression.operating;
 
 import ast.expression.ExpressionNode;
-import ast.expression.operating.PrimaryNode;
 import symbolTable.Class;
+import symbolTable.MethodType;
+import symbolTable.SemanticErrorException;
 
 import java.util.ArrayList;
 
@@ -16,8 +17,7 @@ public class AccessConstructorNode extends PrimaryNode {
         this.lineNumber = lineNumber;
     }
 
-    @Override
-    public void check() {
-
+    public MethodType check() throws SemanticErrorException {
+        return null;
     }
 }

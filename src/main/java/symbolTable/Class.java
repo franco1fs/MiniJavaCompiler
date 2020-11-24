@@ -96,6 +96,10 @@ public class Class extends Module{
         return myMethods;
     }
 
+    public Method getMethodByName(String methodName){
+        return myMethods.get(methodName);
+    }
+
     public Constructor getConstructor(){
         return constructor;
     }
@@ -103,6 +107,13 @@ public class Class extends Module{
     public HashMap<String,Attribute> getMyAtributes(){
         return myAtributes;
     }
+
+    public Attribute getAttributeIfExist(String name){
+        //Only check Attributes that are not hide
+
+        return myAtributes.get(name);
+    }
+
 
     public void checkCorrectDeclaration() throws SemanticErrorException {
         ArrayList<String> ancestors = new ArrayList<String>();

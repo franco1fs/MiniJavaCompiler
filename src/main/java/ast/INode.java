@@ -1,5 +1,7 @@
 package ast;
 
-public interface INode {
-    void check();
+import symbolTable.SemanticErrorException;
+
+public interface INode  {
+    void check() throws SemanticErrorException;
 }

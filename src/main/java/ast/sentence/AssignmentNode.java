@@ -2,7 +2,7 @@ package ast.sentence;
 
 import ast.expression.ExpressionNode;
 import ast.expression.operating.AccessNode;
-import ast.sentence.SentenceNode;
+import symbolTable.SemanticErrorException;
 
 public class AssignmentNode extends SentenceNode {
 
@@ -19,7 +19,7 @@ public class AssignmentNode extends SentenceNode {
     }
 
     @Override
-    public void check() {
+    public void check() throws SemanticErrorException {
 
     }
 }

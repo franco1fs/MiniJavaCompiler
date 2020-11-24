@@ -1,12 +1,12 @@
 package ast.sentence;
 
-import ast.sentence.SentenceNode;
+import symbolTable.SemanticErrorException;
 
 //Punto y coma
 public class SemicolonNode extends SentenceNode {
 
     @Override
-    public void check() {
+    public void check() throws SemanticErrorException {
 
     }
 }
