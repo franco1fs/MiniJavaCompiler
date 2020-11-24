@@ -1,6 +1,7 @@
 package ast.sentence;
 
 import ast.expression.ExpressionNode;
+import symbolTable.MethodType;
 import symbolTable.SemanticErrorException;
 
 public class WhileNode extends SentenceNode {
@@ -14,6 +15,16 @@ public class WhileNode extends SentenceNode {
 
     @Override
     public void check() throws SemanticErrorException {
+        MethodType typeOfExpression = expressionNode.check();
 
+        if(!(typeOfExpression.getTypeName().equals("boolean"))){
+            throw new SemanticErrorException("while",lineNumber,"Error " +
+                    "Semantico en la linea: "+lineNumber+
+                    " el tipo de la condición del While no es booleano");
+
+        }
+        else {
+            sentenceNode.check();
+        }
     }
 }

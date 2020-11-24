@@ -16,4 +16,9 @@ public class AccessThisNode extends PrimaryNode {
         }
         return new TidClass(methodWhereBelong.getMyModule().getName(),lineNumber);
     }
+
+    @Override
+    public String getLexemeOfRepresentation() {
+        return "this";
+    }
 }

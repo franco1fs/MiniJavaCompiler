@@ -8,4 +8,6 @@ public abstract class PrimaryNode  {
 
     public abstract MethodType check() throws SemanticErrorException;
 
+    public abstract String getLexemeOfRepresentation();
+
 }

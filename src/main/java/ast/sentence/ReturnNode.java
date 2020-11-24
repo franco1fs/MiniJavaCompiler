@@ -1,9 +1,8 @@
 package ast.sentence;
 
 import ast.expression.ExpressionNode;
+import symbolTable.*;
 import symbolTable.Class;
-import symbolTable.SemanticErrorException;
-import symbolTable.Unit;
 
 public class ReturnNode extends SentenceNode {
     private ExpressionNode returnExpression;
@@ -14,15 +13,37 @@ public class ReturnNode extends SentenceNode {
         this.returnExpression = returnExpression;
         this.myClass = myClass;
         this.unitWhereBelong = myUnit;
+
     }
 
 
     @Override
     public void check() throws SemanticErrorException {
-        //if(InstanceOf(Constructor)) -- > Error (Constructor no puede tener return)
-        //else{
-        // Casteo a Method y comienzo a chequear
-        // }
+        if(unitWhereBelong instanceof Constructor){
+            throw new SemanticErrorException("return",lineNumber,"Error " +
+                    "Semantico en la linea: "+lineNumber+
+                    " no puede existir una sentencia return en un consturctor");
+        }
+        else{
+            Method method = (Method) unitWhereBelong;
+            MethodType type = method.getReturnType();
+            if(returnExpression==null){
+                if(!(type.getTypeName().equals("void"))){
+                    throw new SemanticErrorException("return",lineNumber,"Error " +
+                            "Semantico en la linea: "+lineNumber+
+                            " la sentencia return es vacia pero el tipo de retorno del metodo es: "+type.getTypeName());
+                }
+            }
+            else{
+                MethodType expressionType = returnExpression.check();
+                if(!(type.isConformedBy(expressionType))){
+                    throw new SemanticErrorException(expressionType.getTypeName(),lineNumber,"Error " +
+                            "Semantico en la linea: "+lineNumber+
+                            " la sentencia return no es correcta debido a que el tipo de retorno del metodo" +
+                            "no es conformado por la expresion de retorno : "+expressionType.getTypeName());
+                }
+            }
+        }
     }
 
     public void setReturnExpression(ExpressionNode returnExpression) {

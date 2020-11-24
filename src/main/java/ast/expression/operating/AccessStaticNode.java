@@ -63,4 +63,9 @@ public class AccessStaticNode extends PrimaryNode {
             }
         }
     }
+
+    @Override
+    public String getLexemeOfRepresentation() {
+        return idClass;
+    }
 }

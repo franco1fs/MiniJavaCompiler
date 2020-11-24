@@ -12,6 +12,11 @@ public class ParentOperantExpressionNode extends PrimaryNode {
         this.lineNumber = lineNumber;
     }
     public MethodType check() throws SemanticErrorException {
-        return null;
+        return expressionNode.check();
+    }
+
+    @Override
+    public String getLexemeOfRepresentation() {
+        return "";
     }
 }

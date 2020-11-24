@@ -612,7 +612,7 @@ public class SyntacticAnalyzer {
         if(Arrays.asList("Asignacion","Asignacion +","Asignacion -").contains(currentToken.getName())){
             String assignmentType=tipoDeAsignacion();
             ExpressionNode expressionNode=expresion();
-            return new AssignmentNode(accessNode,expressionNode,assignmentType);
+            return new AssignmentNode(accessNode,expressionNode,assignmentType,symbolTable.getCurrentBlock());
         }
         else{
             // -> e
@@ -976,10 +976,11 @@ public class SyntacticAnalyzer {
     private AccessConstructorNode accesoConstructor() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
         int lineNumber = currentToken.getLineNumber();
         match("pr_new");
+        String className = currentToken.getLexeme();
         match("idClase");
         genericidadConstructor();
         ArrayList<ExpressionNode> args = argsActuales();
-        return new AccessConstructorNode(args,(Class) symbolTable.getCurrentModule(),lineNumber);
+        return new AccessConstructorNode(args,className,lineNumber);
     }
 
     private void genericidadConstructor() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{

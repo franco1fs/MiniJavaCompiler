@@ -12,7 +12,17 @@ public class AccessNode extends OperantNode {
         this.chainCallContainer = chainCallContainer;
     }
 
+    public PrimaryNode getPrimaryNode() {
+        return primaryNode;
+    }
+
+    public ChainCallContainer getChainCallContainer() {
+        return chainCallContainer;
+    }
+
     public MethodType check() throws SemanticErrorException {
-        return null;
+        MethodType type = primaryNode.check();
+
+        return chainCallContainer.check(type);
     }
 }

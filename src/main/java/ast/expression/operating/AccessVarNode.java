@@ -40,6 +40,11 @@ public class AccessVarNode extends PrimaryNode {
         }
     }
 
+    @Override
+    public String getLexemeOfRepresentation() {
+        return varName;
+    }
+
     private boolean isAccessibleAttributeFromHere(Attribute attribute,Class myClass){
         if(attribute.getVisibility().equals("public")){
             return true;

@@ -1,6 +1,7 @@
 package ast.sentence;
 
 import ast.expression.ExpressionNode;
+import symbolTable.MethodType;
 import symbolTable.SemanticErrorException;
 
 public class IfElseNode extends SentenceNode {
@@ -17,6 +18,19 @@ public class IfElseNode extends SentenceNode {
 
     @Override
     public void check() throws SemanticErrorException {
+        MethodType typeOfExpression = expressionNode.check();
 
+        if(!(typeOfExpression.getTypeName().equals("boolean"))){
+            throw new SemanticErrorException("if",lineNumber,"Error " +
+                    "Semantico en la linea: "+lineNumber+
+                    " el tipo de la condición del if no es booleano");
+
+        }
+        else {
+            ifSentence.check();
+            if(elseSentence!=null){
+                elseSentence.check();
+            }
+        }
     }
 }

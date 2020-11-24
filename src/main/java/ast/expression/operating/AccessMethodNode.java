@@ -59,6 +59,11 @@ public class AccessMethodNode extends PrimaryNode {
         }
     }
 
+    @Override
+    public String getLexemeOfRepresentation() {
+        return methodName;
+    }
+
     private void checkArgs(Method method) throws SemanticErrorException{
 
     }
