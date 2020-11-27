@@ -195,7 +195,9 @@ public class SemanticAnalyzerTest {
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\SemSentencias\\p56.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\SemSentencias\\p57.txt")),
                 Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\SemSentencias\\p58.txt")),
-                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\SemSentencias\\p59.txt"))
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\SemSentencias\\p59.txt")),
+                Arguments.of(new FileManager("C:\\Users\\sacomanif\\Desktop\\CP\\SemSentencias\\p60.txt"))
+
 
 
 

@@ -38,7 +38,7 @@ public class ReturnNode extends SentenceNode {
             else{
                 MethodType expressionType = returnExpression.check();
                 if(!(type.isConformedBy(expressionType))){
-                    throw new SemanticErrorException(expressionType.getTypeName(),lineNumber,"Error " +
+                    throw new SemanticErrorException("return",lineNumber,"Error " +
                             "Semantico en la linea: "+lineNumber+
                             " la sentencia return no es correcta debido a que el tipo de retorno del metodo" +
                             "no es conformado por la expresion de retorno : "+expressionType.getTypeName());
