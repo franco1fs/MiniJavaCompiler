@@ -3,6 +3,7 @@ import lexicalAnalyzer.IFileManager;
 import lexicalAnalyzer.LexicalAnalyzer;
 import lexicalAnalyzer.LexicalErrorException;
 import symbolTable.SemanticErrorException;
+import symbolTable.SymbolTable;
 import syntacticAnalyzer.SyntacticAnalyzer;
 import syntacticAnalyzer.SyntacticErrorException;
 
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 public class Application {
     public static void main (String args[]){
 
-        /**
         String fileName;
 
         if(args.length == 1){
@@ -24,6 +24,8 @@ public class Application {
 
                 try {
                     SyntacticAnalyzer syntacticAnalyzer = new SyntacticAnalyzer(lex);
+                    SymbolTable.getInstance().checkClassesDeclarationAndConsolidationTable();
+                    SymbolTable.getInstance().checkSentences();
 
                     System.out.println("Compilacion Exitosa \n \n [SinErrores]");
 
@@ -52,7 +54,7 @@ public class Application {
         else{
             System.out.println("La cantidad de argumentos es INVALIDA, falta agregar la ruta del archivo de entrada");
         }
-         **/
+
 
     }
 

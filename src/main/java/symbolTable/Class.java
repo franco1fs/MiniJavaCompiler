@@ -1,5 +1,7 @@
 package symbolTable;
 
+import ast.sentence.BlockNode;
+
 import java.util.*;
 
 public class Class extends Module{
@@ -149,6 +151,8 @@ public class Class extends Module{
     private void checkConstructorExistenceAndCorrectDeclaration() throws SemanticErrorException {
         if(constructor == null){
             constructor = new Constructor(name,0,this);
+            BlockNode blockNode = new BlockNode(null,constructor);
+            constructor.setMyBlock(blockNode);
         }
         else {
             constructor.checkConstructorParameterDeclaration();
@@ -231,5 +235,12 @@ public class Class extends Module{
             ancestor = symbolTable.getClasses().get(ancestor).getAncestor();
         }
         return methods;
+    }
+
+    public void checkSentences() throws SemanticErrorException {
+        constructor.getMyBlock().check();
+        for(String method: orderOfMethods){
+            myMethods.get(method).getMyBlock().check();
+        }
     }
 }

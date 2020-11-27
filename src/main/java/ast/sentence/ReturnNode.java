@@ -9,10 +9,11 @@ public class ReturnNode extends SentenceNode {
     private Class myClass;
     private Unit unitWhereBelong;
 
-    public ReturnNode(ExpressionNode returnExpression, Class myClass, Unit myUnit) {
+    public ReturnNode(ExpressionNode returnExpression, Class myClass, Unit myUnit,int ln) {
         this.returnExpression = returnExpression;
         this.myClass = myClass;
         this.unitWhereBelong = myUnit;
+        this.lineNumber = ln;
 
     }
 

@@ -11,6 +11,15 @@ public class AccessMethodNode extends PrimaryNode {
     private ArrayList<ExpressionNode> args = new ArrayList<ExpressionNode>();
     private String methodName;
     private Class myClass;
+    private Method methodWhereBelong = null;
+
+    public AccessMethodNode(ArrayList<ExpressionNode> args, String methodName, Class myClass,int lineNumber,Method method) {
+        this.args = args;
+        this.methodName = methodName;
+        this.myClass = myClass;
+        this.lineNumber = lineNumber;
+        this.methodWhereBelong = method;
+    }
 
     public AccessMethodNode(ArrayList<ExpressionNode> args, String methodName, Class myClass,int lineNumber) {
         this.args = args;
@@ -37,6 +46,11 @@ public class AccessMethodNode extends PrimaryNode {
         if(methodCall==null){
             throw new SemanticErrorException(methodName,lineNumber,"Error Semantico en la linea: "+
                     lineNumber+" acceso a metodo invalido debido a que no existe un Metodo con nombre: "+
+                    methodName);
+        }
+        if( methodWhereBelong!= null && methodCall.getMethodForm().equals("dynamic") && methodWhereBelong.getMethodForm().equals("static")){
+            throw new SemanticErrorException(methodName,lineNumber,"Error Semantico en la linea: "+
+                    lineNumber+" acceso a metodo dynamic invalido dentro de un metodo estatico: "+
                     methodName);
         }
         else{

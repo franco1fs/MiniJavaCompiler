@@ -29,6 +29,13 @@ public class AccessVarNode extends PrimaryNode {
                         lineNumber+" No existe un identificador con ese nombre: "+varName);
             }
             else{
+                if( blockWhereBeingUsed.getUnitWhereIBelong() instanceof Method ){
+                    Method method = (Method) blockWhereBeingUsed.getUnitWhereIBelong();
+                    if( method.getMethodForm().equals("static")){
+                        throw new SemanticErrorException(varName,lineNumber,"Error Semantico en la linea: "+
+                                lineNumber+" No se puede acceder al atributo: "+varName+ " desde un metodo estatico");
+                    }
+                }
                 if(isAccessibleAttributeFromHere(attribute,myClass)){
                     return attribute.getType();
                 }

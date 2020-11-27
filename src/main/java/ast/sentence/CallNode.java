@@ -13,7 +13,7 @@ public class CallNode extends SentenceNode {
 
     @Override
     public void check() throws SemanticErrorException {
-        if(accessNode.getChainCallContainer().getChainCallArrayList()==null){
+        if(accessNode.getChainCallContainer().getChainCallArrayList().size() == 0){
             if( !( accessNode.getPrimaryNode() instanceof AccessMethodNode || accessNode.getPrimaryNode() instanceof AccessStaticNode
                     || accessNode.getPrimaryNode() instanceof AccessConstructorNode)){
                 throw new SemanticErrorException(accessNode.getPrimaryNode().getLexemeOfRepresentation(),lineNumber,"Error " +

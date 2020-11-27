@@ -28,7 +28,7 @@ public class BlockNode extends SentenceNode {
     private void convertAndAddParametersToLocalVars(){
         ArrayList<Parameter> parameters = unitWhereIBelong.getParameters();
         for(Parameter parameter: parameters){
-            localVars.add(new LocalVar(parameter.getType(),parameter.getName()));
+            localVars.add(new LocalVar(parameter.getType(),parameter.getName(),lineNumber));
         }
     }
 
@@ -89,5 +89,9 @@ public class BlockNode extends SentenceNode {
         for (SentenceNode sentenceNode: sentences){
             sentenceNode.check();
         }
+    }
+
+    public BlockNode getFatherBlock(){
+        return fatherBlock;
     }
 }

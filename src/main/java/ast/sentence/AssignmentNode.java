@@ -26,36 +26,45 @@ public class AssignmentNode extends SentenceNode {
     @Override
     public void check() throws SemanticErrorException {
         MethodType typeOfAccess= null;
-        if(leftAccessNode.getChainCallContainer().getChainCallArrayList()==null
-                && leftAccessNode.getPrimaryNode() instanceof AccessVarNode){
-            LocalVar localVar = blockWhereIBelong.getParameterOrLocalVarIfExist
-                    (leftAccessNode.getPrimaryNode().getLexemeOfRepresentation());
-            if(localVar==null){
-                Class classWhereIBelong = (Class) blockWhereIBelong.getUnitWhereIBelong().getMyModule();
-                Attribute attribute = classWhereIBelong.getAttributeIfExist
+        if(leftAccessNode.getChainCallContainer().getChainCallArrayList().size() == 0){
+            if(leftAccessNode.getPrimaryNode() instanceof AccessVarNode) {
+                LocalVar localVar = blockWhereIBelong.getParameterOrLocalVarIfExist
                         (leftAccessNode.getPrimaryNode().getLexemeOfRepresentation());
-                if(attribute==null){
-                    throw new SemanticErrorException(leftAccessNode.getPrimaryNode().getLexemeOfRepresentation(),lineNumber,"Error " +
-                            "Semantico en la linea: "+lineNumber+
-                            " la asignacion es incorrecta debido a que el acceso no es ni un parametro, ni var local" +
-                            "ni atributo de instancia");
-                }
-                else{
+                if (localVar == null) {
+                    Class classWhereIBelong = (Class) blockWhereIBelong.getUnitWhereIBelong().getMyModule();
+                    Attribute attribute = classWhereIBelong.getAttributeIfExist
+                            (leftAccessNode.getPrimaryNode().getLexemeOfRepresentation());
+                    if (attribute == null) {
+                        throw new SemanticErrorException(leftAccessNode.getPrimaryNode().getLexemeOfRepresentation(), lineNumber, "Error " +
+                                "Semantico en la linea: " + lineNumber +
+                                " la asignacion es incorrecta debido a que el acceso no es ni un parametro, ni var local" +
+                                "ni atributo de instancia");
+                    } else {
+                        typeOfAccess = leftAccessNode.check();
+                    }
+                } else {
                     typeOfAccess = leftAccessNode.check();
                 }
+
+
             }
             else{
-                typeOfAccess = leftAccessNode.check();
+                throw new SemanticErrorException(leftAccessNode.getPrimaryNode().getLexemeOfRepresentation(), lineNumber, "Error " +
+                        "Semantico en la linea: " + lineNumber +
+                        " la asignacion es incorrecta debido a que el acceso no es ni un parametro, ni var local" +
+                        "ni atributo de instancia");
             }
+
         }
-        else if(leftAccessNode.getChainCallContainer().getChainCallArrayList()!=null){
-            int indexOfLastElementOfCall = leftAccessNode.getChainCallContainer().getChainCallArrayList().size();
+        else if(leftAccessNode.getChainCallContainer().getChainCallArrayList().size()>0){
+            int indexOfLastElementOfCall = leftAccessNode.getChainCallContainer().getChainCallArrayList().size() -1 ;
             ChainCall lastElement = leftAccessNode.getChainCallContainer().getChainCallArrayList().get(indexOfLastElementOfCall);
             if(lastElement instanceof VarChainCall){
                 typeOfAccess = leftAccessNode.check();
             }
             else{
-                throw new SemanticErrorException(leftAccessNode.getChainCallContainer().getChainCallArrayList().get(indexOfLastElementOfCall).getLexemeOfRepresentation()
+                throw new SemanticErrorException(leftAccessNode.getChainCallContainer().getChainCallArrayList().
+                        get(indexOfLastElementOfCall).getLexemeOfRepresentation()
                         ,lineNumber,"Error " +
                         "Semantico en la linea: "+lineNumber+
                         " la asignacion es incorrecta debido a que el acceso encadenado no tiene como ultimo elemento el acceso a " +

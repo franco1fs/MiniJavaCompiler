@@ -27,7 +27,7 @@ public class DecVarsNode extends SentenceNode {
             }
         }
         for (String var: vars){
-            blockWhereBelong.insertLocalVar(new LocalVar(type,var));
+            blockWhereBelong.insertLocalVar(new LocalVar(type,var,lineNumber));
         }
     }
 }

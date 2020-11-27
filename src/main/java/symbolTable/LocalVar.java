@@ -5,9 +5,10 @@ public class LocalVar extends Entity{
     private String name;
     private String value;
 
-    public LocalVar(Type type, String name) {
+    public LocalVar(Type type, String name,int ln) {
         this.type = type;
         this.name = name;
+        this.lineNumber = ln;
     }
 
     public Type getType() {

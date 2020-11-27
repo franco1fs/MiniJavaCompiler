@@ -25,13 +25,13 @@ public class UnaryExpressionNode extends ExpressionNode {
         if(unaryOperator!=null && (unaryOperator.equals("+") || unaryOperator.equals("-"))){
             if(!expressionType.getTypeName().equals("int")){
                 throw new SemanticErrorException(unaryOperator,lineNumber,"Error Semantico en la linea: "+lineNumber+
-                        " El operador "+operantNode+ " no es aplicable a una subexpresion que no sea de tipo int");
+                        " El operador "+unaryOperator+ " no es aplicable a una subexpresion que no sea de tipo int");
             }
         }
         else if(unaryOperator!=null && unaryOperator.equals("!")){
             if(!expressionType.getTypeName().equals("boolean")){
                 throw new SemanticErrorException(unaryOperator,lineNumber,"Error Semantico en la linea: "+lineNumber+
-                        " El operador "+operantNode+ " no es aplicable a una subexpresion que no sea de tipo boolean");
+                        " El operador "+unaryOperator+ " no es aplicable a una subexpresion que no sea de tipo boolean");
 
             }
         }

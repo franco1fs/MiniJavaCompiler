@@ -27,7 +27,7 @@ public class SyntacticAnalyzer {
         symbolTable = SymbolTable.getInstance();
         symbolTable.reLoadSymbolTable();
         inicial();
-        symbolTable.checkClassesDeclarationAndConsolidationTable();
+
 
     }
 
@@ -476,6 +476,8 @@ public class SyntacticAnalyzer {
         match("Llave cierra");
         blockNode.setSentences(sentenceNodes);
 
+        symbolTable.setCurrentBlock(blockNode.getFatherBlock());
+
         return blockNode;
 
     }
@@ -489,7 +491,7 @@ public class SyntacticAnalyzer {
         if(firstOfSentence.contains(currentToken.getName())){
             SentenceNode sentenceNode = sentencia(fatherBlock);
             sentenceNodes.add(sentenceNode);
-            listaSentencias(sentenceNodes,fatherBlock);
+            listaSentencias(sentenceNodes,symbolTable.getCurrentBlock());
         }
         else{
             //listaSentencias -> e
@@ -583,7 +585,7 @@ public class SyntacticAnalyzer {
             match("pr_return");
             ExpressionNode expressionNode = expresionOVacio();
             match("Punto y coma");
-            return new ReturnNode(expressionNode, currentClass,currentClass.getCurrentUnit());
+            return new ReturnNode(expressionNode, currentClass,currentClass.getCurrentUnit(),lineNumber);
         }
         else{
             throw new SyntacticErrorException(currentToken,"Punto y coma, pr_this, idMetVar, pr_static ,pr_new ," +
@@ -690,9 +692,11 @@ public class SyntacticAnalyzer {
                 "Operador menor o igual","Operador distinto","Operador comparacion");
 
         if(firstOfBinOp.contains(currentToken.getName())){
+            int lineNumber = currentToken.getLineNumber();
             String binaryOperator = operadorBinario();
             UnaryExpressionNode rightExpressionNode = expresionUnaria();
-            BinaryExpressionNode binaryExpressionNode = new BinaryExpressionNode(leftExpressionNode,rightExpressionNode,binaryOperator);
+            BinaryExpressionNode binaryExpressionNode = new BinaryExpressionNode(leftExpressionNode,rightExpressionNode,binaryOperator,
+                    lineNumber);
             return restoExpresion(binaryExpressionNode);
         }
         else{
@@ -909,7 +913,11 @@ public class SyntacticAnalyzer {
         int lineNumber = currentToken.getLineNumber();
         match("pr_this");
         Class classe = (Class) symbolTable.getCurrentModule();
-        return new AccessThisNode(lineNumber,(Method) classe.getCurrentUnit());
+        Unit unit = classe.getCurrentUnit();
+        //Method method = null;
+        //if( unit instanceof Method)
+            //method = (Method) unit;
+        return new AccessThisNode(lineNumber,unit);
     }
 
     private AccessVarNode accesoVar() throws SyntacticErrorException, LexicalErrorException, SemanticErrorException{
@@ -925,7 +933,13 @@ public class SyntacticAnalyzer {
         match("idMetVar");
         //Tomar la lista que devuelve args actuales y agregarla al constructor de retorno
         ArrayList<ExpressionNode> args = argsActuales();
-        return new AccessMethodNode(args,method,(Class) symbolTable.getCurrentModule(),lineNumber);
+        Class myClass = (Class) symbolTable.getCurrentModule();
+        Unit unit = myClass.getCurrentUnit();
+        if( unit instanceof Method)
+            return new AccessMethodNode(args,method,myClass,lineNumber,(Method) myClass.getCurrentUnit());
+        else{
+            return new AccessMethodNode(args,method,myClass,lineNumber);
+        }
     }
 
     /**

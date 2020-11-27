@@ -42,7 +42,7 @@ class BlockNodeTest {
         BlockNode blockNode = new BlockNode(null,
                 createMethod(SymbolTable.getInstance().getClasses().get("C3")));
         try {
-            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1"));
+            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1",0));
         }
         catch (SemanticErrorException e){
             System.out.println(e.getMessage());
@@ -59,8 +59,8 @@ class BlockNodeTest {
         BlockNode blockNode = new BlockNode(null,
                 createMethod(SymbolTable.getInstance().getClasses().get("C3")));
         try {
-            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1"));
-            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1"));
+            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1",0));
+            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1",0));
         }
         catch (SemanticErrorException e){
             System.out.println(e.getMessage());
@@ -91,9 +91,9 @@ class BlockNodeTest {
         BlockNode blockNode = new BlockNode(null,
                 createMethodWithParameter(SymbolTable.getInstance().getClasses().get("C3")));
         try {
-            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1"));
-            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v2"));
-            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v3"));
+            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v1",0));
+            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v2",0));
+            blockNode.insertLocalVar(new LocalVar(new Tchar("char", 0), "v3",0));
         }
         catch (SemanticErrorException e){
             System.out.println(e.getMessage());

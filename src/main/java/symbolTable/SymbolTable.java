@@ -134,6 +134,11 @@ public class SymbolTable {
         }
         }
 
+        public void checkSentences() throws SemanticErrorException {
+            for (String c: orderOfClases){
+                classes.get(c).checkSentences();
+            }
+        }
         private boolean noExistMainOrExistMoreThanOne(ArrayList<Method> allMethods){
             boolean toRet = true;
             int mainCount = 0;

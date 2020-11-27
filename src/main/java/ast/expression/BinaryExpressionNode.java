@@ -11,10 +11,11 @@ public class BinaryExpressionNode extends ExpressionNode {
     private ExpressionNode rightSide;
     private String binaryOperator;
 
-    public BinaryExpressionNode(ExpressionNode leftSide, ExpressionNode rightSide, String binaryOperator) {
+    public BinaryExpressionNode(ExpressionNode leftSide, ExpressionNode rightSide, String binaryOperator, int ln) {
         this.leftSide = leftSide;
         this.rightSide = rightSide;
         this.binaryOperator = binaryOperator;
+        this.lineNumber = ln;
     }
 
     public MethodType check() throws SemanticErrorException {
