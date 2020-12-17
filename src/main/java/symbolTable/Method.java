@@ -11,6 +11,7 @@ public class Method extends Unit{
     private String methodForm;
     protected MethodType returnType;
     //private enum methodForm = {"static", "dynamic"};
+    private int offsetVt = -1;
 
 
     public Method(String name, Module myModule, MethodType returnType, ArrayList<Parameter> parameters, int lineNumber) {
@@ -28,6 +29,13 @@ public class Method extends Unit{
         this.returnType = returnType;
         this.methodForm = methodForm;
         this.lineNumber = lineNumber;
+    }
+    public int getOffsetVt(){
+        return offsetVt;
+    }
+
+    public void setOffsetVt(int offsetVt){
+        this.offsetVt = offsetVt;
     }
 
     public void checkMethodTypeDeclaration() throws SemanticErrorException{
@@ -76,6 +84,38 @@ public class Method extends Unit{
             answer = false;
         }
         return answer;
+    }
+
+    public void generate(){
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        symbolTable.genInstruction(".CODE");
+        if(name.equals("main")){
+            symbolTable.genInstruction("main:");
+        }
+        else{
+            symbolTable.genInstruction(name+"_"+myModule.getName()+":");
+        }
+        symbolTable.genInstruction("LOADFP");
+        symbolTable.genInstruction("LOADSP");
+        symbolTable.genInstruction("STOREFP");
+
+        if(getMyBlock()!=null){
+            getMyBlock().generate();
+        }
+
+
+        if(name.equals("main")){
+            symbolTable.genInstruction("HALT");
+        }
+        else if(!name.equals("main") && methodForm.equals("static")){
+            symbolTable.genInstruction("STOREFP");
+            symbolTable.genInstruction("RET "+parameters.size());
+        }
+
+        else{
+            symbolTable.genInstruction("STOREFP");
+            symbolTable.genInstruction("RET "+parameters.size()+1);
+        }
     }
 
 

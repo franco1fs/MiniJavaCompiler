@@ -15,7 +15,8 @@ public class Application {
 
         String fileName;
 
-        if(args.length == 1){
+        //Changed 2 per 1
+        if(args.length == 2){
             fileName = args[0];
             try {
                 IFileManager fileManager = new FileManager(fileName);
@@ -25,8 +26,12 @@ public class Application {
                 try {
                     SyntacticAnalyzer syntacticAnalyzer = new SyntacticAnalyzer(lex);
                     SymbolTable.getInstance().checkClassesDeclarationAndConsolidationTable();
+                    SymbolTable.getInstance().consolidateOffsets();
                     SymbolTable.getInstance().checkSentences();
-
+                    SymbolTable.getInstance().setAndCreateFileWriter(args[1]);
+                    SymbolTable.getInstance().initializeCIVM();
+                    SymbolTable.getInstance().generateCode();
+                    SymbolTable.getInstance().closeFile();
                     System.out.println("Compilacion Exitosa \n \n [SinErrores]");
 
                 }

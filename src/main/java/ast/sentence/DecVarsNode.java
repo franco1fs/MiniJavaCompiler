@@ -30,4 +30,9 @@ public class DecVarsNode extends SentenceNode {
             blockWhereBelong.insertLocalVar(new LocalVar(type,var,lineNumber));
         }
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

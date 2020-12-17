@@ -4,11 +4,20 @@ public class LocalVar extends Entity{
     private Type type;
     private String name;
     private String value;
+    private int offset;
 
     public LocalVar(Type type, String name,int ln) {
         this.type = type;
         this.name = name;
         this.lineNumber = ln;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public  int getOffset(){
+        return offset;
     }
 
     public Type getType() {

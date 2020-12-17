@@ -6,8 +6,17 @@ public class Attribute extends Entity{
     protected String visibility;
 
     private String classWhereBelong;
+    private int offsetCir= 0;
 
-    public Attribute(String name,int lineNumber,Type type,String visibility,String classWhereBelong){
+    public void setOffsetCir(int offsetCir) {
+        this.offsetCir = offsetCir;
+    }
+
+    public int getOffsetCir() {
+        return offsetCir;
+    }
+
+    public Attribute(String name, int lineNumber, Type type, String visibility, String classWhereBelong){
         this.name = name;
         this.lineNumber = lineNumber;
         this.type = type;

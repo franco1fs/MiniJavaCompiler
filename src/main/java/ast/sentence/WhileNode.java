@@ -27,4 +27,9 @@ public class WhileNode extends SentenceNode {
             sentenceNode.check();
         }
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

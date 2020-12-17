@@ -19,4 +19,9 @@ public class ParentOperantExpressionNode extends PrimaryNode {
     public String getLexemeOfRepresentation() {
         return "";
     }
+
+    @Override
+    public void generate() {
+        expressionNode.generate();
+    }
 }

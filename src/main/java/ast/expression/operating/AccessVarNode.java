@@ -52,6 +52,12 @@ public class AccessVarNode extends PrimaryNode {
         return varName;
     }
 
+    @Override
+    public void generate() {
+
+
+    }
+
     private boolean isAccessibleAttributeFromHere(Attribute attribute,Class myClass){
         if(attribute.getVisibility().equals("public")){
             return true;

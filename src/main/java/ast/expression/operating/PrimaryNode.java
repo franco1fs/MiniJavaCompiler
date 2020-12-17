@@ -10,4 +10,6 @@ public abstract class PrimaryNode  {
 
     public abstract String getLexemeOfRepresentation();
 
+    public abstract void generate();
+
 }

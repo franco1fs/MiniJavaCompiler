@@ -29,6 +29,25 @@ public class Constructor extends Unit{
         }
     }
 
+    public void generate(){
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        symbolTable.genInstruction(".CODE");
+        symbolTable.genInstruction(name+":");
+
+        symbolTable.genInstruction("LOADFP");
+        symbolTable.genInstruction("LOADSP");
+        symbolTable.genInstruction("STOREFP");
+
+        if(getMyBlock()!=null){
+            getMyBlock().generate();
+        }
+
+
+        symbolTable.genInstruction("LOAD 3");
+        symbolTable.genInstruction("STORE "+( 3 + parameters.size() + 1));
+        symbolTable.genInstruction("STOREFP");
+        symbolTable.genInstruction("RET "+parameters.size()+1);
+    }
 
 
 }

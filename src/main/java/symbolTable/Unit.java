@@ -29,6 +29,13 @@ public class Unit extends Entity {
             throw new SemanticErrorException(parameter.getName(),parameter.getLineNumber(),"Hay un nombre de " +
                     "parametro repetido en la unidad "+ name );
         }
+        if(this instanceof Constructor || (this instanceof Method && ((Method) this).getMethodForm().equals("dynamic"))){
+            parameter.setOffset(parameters.size()+4);
+        }
+        else{
+            parameter.setOffset(parameters.size()+3);
+        }
+
         parameters.add(parameter);
     }
 
@@ -44,5 +51,8 @@ public class Unit extends Entity {
         return parameters;
     }
 
+    public void generate(){
+
+    }
 
 }

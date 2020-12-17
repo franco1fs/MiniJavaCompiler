@@ -9,4 +9,9 @@ public class SemicolonNode extends SentenceNode {
     public void check() throws SemanticErrorException {
 
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

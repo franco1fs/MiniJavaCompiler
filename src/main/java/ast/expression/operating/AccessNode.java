@@ -25,4 +25,9 @@ public class AccessNode extends OperantNode {
 
         return chainCallContainer.check(type);
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

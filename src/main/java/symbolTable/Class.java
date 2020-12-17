@@ -23,6 +23,8 @@ public class Class extends Module{
     private ArrayList<String> orderOfAttributes = new ArrayList<String>();
     private ArrayList<String> orderOfMethods = new ArrayList<String>();
 
+    private boolean areOffsetsConsolidate = false;
+
     public Class(String name,int lineNumber){
         this.name = name;
         this.lineNumber = lineNumber;
@@ -237,10 +239,102 @@ public class Class extends Module{
         return methods;
     }
 
+    public boolean getIfAreOffsetConsolidate(){
+        return areOffsetsConsolidate;
+    }
+
+    public void consolidateOffsets(){
+        if(!areOffsetsConsolidate){
+            areOffsetsConsolidate = true;
+            if(ancestor!=null && !symbolTable.getClasses().get(ancestor).areOffsetsConsolidate){
+                symbolTable.getClasses().get(ancestor).consolidateOffsets();
+            }
+            int greaterOffsetVt = getGreaterOffsetVt();
+            setMethodsOffset(greaterOffsetVt);
+            int greaterOffsetCir = getGreaterOffsetCir();
+            setAttributesOffset(greaterOffsetCir);
+        }
+    }
+
+    private int getGreaterOffsetVt(){
+        Collection<Method> methods = myMethods.values();
+        int greaterOffset = -1;
+        for(Method method : methods){
+            if(method.getOffsetVt()>greaterOffset){
+                greaterOffset = method.getOffsetVt();
+            }
+        }
+        return greaterOffset;
+    }
+
+    private void setMethodsOffset(int greaterOff){
+        greaterOff = greaterOff +1 ;
+
+
+        for(String name : orderOfMethods){
+            myMethods.get(name).setOffsetVt(greaterOff);
+            greaterOff = greaterOff + 1;
+        }
+    }
+
+    private int getGreaterOffsetCir(){
+        Collection<Attribute> attributes = myAtributes.values();
+        int greaterOffset = 0;
+        for(Attribute attribute : attributes){
+            if(attribute.getOffsetCir()>greaterOffset){
+                greaterOffset = attribute.getOffsetCir();
+            }
+        }
+        return greaterOffset;
+    }
+
+    private void setAttributesOffset(int greaterOffset){
+        greaterOffset = greaterOffset + 1 ;
+
+        for(String name: orderOfAttributes){
+            myAtributes.get(name).setOffsetCir(greaterOffset);
+            greaterOffset = greaterOffset + 1;
+        }
+    }
+
+
     public void checkSentences() throws SemanticErrorException {
         constructor.getMyBlock().check();
         for(String method: orderOfMethods){
             myMethods.get(method).getMyBlock().check();
         }
+    }
+    public boolean atLeastExistADynamicMethod(){
+        boolean answer = false;
+        for(Method method: myMethods.values()){
+            if(method.getMethodForm().equals("dynamic")){
+                answer = true;
+                break;
+            }
+        }
+        return answer;
+    }
+
+    private void createVTandLabels(){
+        if(atLeastExistADynamicMethod()){
+            symbolTable.genInstruction(".DATA");
+            symbolTable.genInstruction("VT_"+name+":");
+        }
+        for(Method method: myMethods.values()){
+            if(method.getMethodForm().equals("dynamic")){
+                symbolTable.genInstruction("DW "+method.getName());
+            }
+        }
+    }
+
+    public void generate(){
+        createVTandLabels();
+
+        constructor.generate();
+
+        for(Method method: myMethods.values()){
+           method.generate();
+        }
+
     }
 }

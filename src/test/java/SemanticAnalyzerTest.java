@@ -117,6 +117,7 @@ public class SemanticAnalyzerTest {
         try {
             SyntacticAnalyzer sa = new SyntacticAnalyzer(la);
             SymbolTable.getInstance().checkClassesDeclarationAndConsolidationTable();
+            //SymbolTable.getInstance().consolidateOffsets();
             SymbolTable.getInstance().checkSentences();
             System.out.println("Paso Exitosamente");
         }

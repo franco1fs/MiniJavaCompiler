@@ -63,4 +63,9 @@ public class BinaryExpressionNode extends ExpressionNode {
             }
         }
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

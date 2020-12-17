@@ -8,4 +8,6 @@ public abstract class SentenceNode implements INode {
     public void setLineNumber(int lineNumber){
         this.lineNumber = lineNumber;
     }
+
+    public abstract void generate();
 }

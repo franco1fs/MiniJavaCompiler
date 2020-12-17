@@ -72,5 +72,8 @@ public class ReturnNode extends SentenceNode {
     }
 
 
+    @Override
+    public void generate() {
 
+    }
 }

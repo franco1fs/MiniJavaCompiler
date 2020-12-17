@@ -33,4 +33,9 @@ public class IfElseNode extends SentenceNode {
             }
         }
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

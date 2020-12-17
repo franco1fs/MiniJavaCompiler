@@ -9,4 +9,9 @@ public class ParenthesisExpressionNode extends ExpressionNode {
     public MethodType check() throws SemanticErrorException {
         return null;
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

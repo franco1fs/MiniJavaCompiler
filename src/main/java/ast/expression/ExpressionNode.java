@@ -10,4 +10,6 @@ public abstract class ExpressionNode {
         return lineNumber;
     }
     public abstract MethodType check() throws SemanticErrorException;
+
+    public abstract void generate();
 }

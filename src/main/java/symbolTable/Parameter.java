@@ -2,11 +2,20 @@ package symbolTable;
 
 public class Parameter extends Entity{
     protected Type type;
+    private int offset;
 
     public Parameter(String name, int lineNumber, Type type){
         this.name = name;
         this.lineNumber = lineNumber;
         this.type = type;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public Type getType(){

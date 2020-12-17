@@ -37,4 +37,9 @@ public class CallNode extends SentenceNode {
             accessNode.check();
         }
     }
+
+    @Override
+    public void generate() {
+
+    }
 }

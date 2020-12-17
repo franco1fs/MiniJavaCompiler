@@ -2,6 +2,9 @@ package symbolTable;
 
 import ast.sentence.BlockNode;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +18,11 @@ public class SymbolTable {
 
     private BlockNode currentBlock;
 
+    private File outputFile;
+    private FileWriter fileWriter;
+
+    private int indexLabel = 0;
+
 
     public static SymbolTable getInstance(){
         return myInstance;
@@ -25,12 +33,45 @@ public class SymbolTable {
         loadBasicModules();
     }
 
+    public void setAndCreateFileWriter(String outputPath){
+
+        try{
+            outputFile = new File(outputPath);
+            fileWriter = new FileWriter(outputFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void closeFile(){
+        try {
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void genInstruction(String code){
+        try {
+            fileWriter.write(code+'\n');
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void loadBasicModules(){
+
+        try {
         Class object = new Class("Object",0,null);
 
+        object.insertConstructor(new Constructor("Object",0,object));
         classes.put("Object",object);
 
         Class system = new Class("System",0,"Object");
+        system.insertConstructor(new Constructor("System",0,object));
+
 
         Type integer = new Tint("int",0);
         Type booleano = new Tboolean("boolean",0);
@@ -39,7 +80,7 @@ public class SymbolTable {
         Tvoid tVoid = new Tvoid(0);
 
 
-        try {
+
             Method m1 = new Method("read", system, integer, "static", 0);
             system.insertMethod(m1);
 
@@ -134,6 +175,12 @@ public class SymbolTable {
         }
         }
 
+        public void consolidateOffsets(){
+            for (String c: orderOfClases) {
+                classes.get(c).consolidateOffsets();
+            }
+        }
+
         public void checkSentences() throws SemanticErrorException {
             for (String c: orderOfClases){
                 classes.get(c).checkSentences();
@@ -169,6 +216,152 @@ public class SymbolTable {
 
         public Class getClass(String className){
             return classes.get(className);
+        }
+
+        public String getLabel(){
+            String label = "etiqueta"+indexLabel;
+            indexLabel++;
+            return label;
+        }
+
+        //Deberia llamarse previamente a generar
+        public void initializeCIVM(){
+
+                genInstruction(".CODE");
+
+                genInstruction("PUSH simple_heap_init");
+                genInstruction("CALL");
+                genInstruction("PUSH main" );
+                genInstruction("CALL");
+                genInstruction("HALT" );
+
+                //CODIGO SIMPLE HEAP INIT DE LA CATEDRA
+                genInstruction("simple_heap_init: ");
+                genInstruction("RET 0	; Retorna inmediatamente");
+
+                //CODIGO SIMPLE MALLOC DE LA CATEDRA
+                genInstruction("simple_malloc: ");
+                genInstruction("LOADFP ; inicializa RA" );
+                genInstruction("LOADSP ");
+                genInstruction("STOREFP ; Fin ini RA");
+                genInstruction("LOADHL ; hl");
+                genInstruction("DUP ; hl");
+                genInstruction("PUSH 1; 1");
+                genInstruction("ADD ; hl+1" );
+                genInstruction("STORE 4; Guarda el resultado (un puntero a la primer celda de la región de memoria)");
+                genInstruction("LOAD 3; Carga la cantidad de celdas a alojar (parámetro que debe ser positivo)" );
+                genInstruction("ADD" );
+                genInstruction("STOREHL ;  agranda el heap");
+                genInstruction("STOREFP ");
+                genInstruction("RET 1 ; Retorna eliminando el parámetro");
+
+                generateSystemClassCode();
+
+        }
+
+        private void generateSystemClassCode(){
+            genInstruction(".CODE" );
+
+            genInstruction("system_read: ");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("READ");
+            genInstruction("PUSH 48");
+            genInstruction("SUB");
+            genInstruction("STORE 3");
+            genInstruction("STOREFP");
+            genInstruction("RET 0");
+
+            genInstruction("system_printi: ");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("IPRINT");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_printiln: ");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("IPRINT");
+            genInstruction("PRNLN");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_printb: ");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("BPRINT");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_printbln:");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("BPRINT");
+            genInstruction("PRNLN");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_printc: ");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("CPRINT");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_printcln:");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("CPRINT");
+            genInstruction("PRNLN");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_prints: ");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("SPRINT");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_printsln:");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("LOAD 3");
+            genInstruction("SPRINT");
+            genInstruction("PRNLN");
+            genInstruction("STOREFP");
+            genInstruction("RET 1");
+
+            genInstruction("system_println:");
+            genInstruction("LOADFP");
+            genInstruction("LOADSP");
+            genInstruction("STOREFP");
+            genInstruction("PRNLN");
+            genInstruction("STOREFP");
+            genInstruction("RET 0");
+        }
+
+        public void generateCode(){
+            for(Class classe : classes.values()){
+                classe.generate();
+            }
         }
 }
 

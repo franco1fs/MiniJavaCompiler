@@ -91,4 +91,10 @@ public class AssignmentNode extends SentenceNode {
             }
         }
     }
+
+    @Override
+    public void generate() {
+        rightExpressionNode.generate();
+        leftAccessNode.generate();
+    }
 }

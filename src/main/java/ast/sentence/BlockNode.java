@@ -13,6 +13,8 @@ public class BlockNode extends SentenceNode {
     private Unit unitWhereIBelong; // The unit knows the Module where belong
     private ArrayList<LocalVar> localVars = new ArrayList<LocalVar>();
 
+    private int offsetLocalVar=0;
+
     public BlockNode(BlockNode fatherBlock,Unit unitWhereIBelong) {
         this.fatherBlock = fatherBlock;
         this.unitWhereIBelong = unitWhereIBelong;
@@ -45,12 +47,22 @@ public class BlockNode extends SentenceNode {
         this.sentences = sentences;
     }
 
+    public int getOffsetLocalVar(){
+        return offsetLocalVar;
+    }
     public void insertLocalVar(LocalVar var) throws SemanticErrorException{
         if(thereIsOtherLocalVarOParamWithSameName(var)){
             throw new SemanticErrorException(var.getName(),var.getLineNumber(),"Error Semantico en la linea: "+
                     var.getLineNumber()+" ya existe un Parametro Formal/ Variable Local con el mismo nombre: "+var.getName());
         }
         localVars.add(var);
+        if(fatherBlock!=null){
+            var.setOffset(fatherBlock.getOffsetLocalVar()+offsetLocalVar);
+        }
+        else{
+            var.setOffset(offsetLocalVar);
+        }
+        offsetLocalVar--;
     }
     private boolean thereIsOtherLocalVarOParamWithSameName(LocalVar var){
         boolean answer = false;
@@ -93,5 +105,10 @@ public class BlockNode extends SentenceNode {
 
     public BlockNode getFatherBlock(){
         return fatherBlock;
+    }
+
+    @Override
+    public void generate() {
+
     }
 }

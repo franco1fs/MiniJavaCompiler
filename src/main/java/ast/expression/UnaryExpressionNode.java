@@ -3,6 +3,7 @@ package ast.expression;
 import ast.expression.operating.OperantNode;
 import symbolTable.MethodType;
 import symbolTable.SemanticErrorException;
+import symbolTable.SymbolTable;
 import symbolTable.Type;
 
 public class UnaryExpressionNode extends ExpressionNode {
@@ -36,5 +37,11 @@ public class UnaryExpressionNode extends ExpressionNode {
             }
         }
         return expressionType;
+    }
+
+    @Override
+    public void generate() {
+
+
     }
 }
