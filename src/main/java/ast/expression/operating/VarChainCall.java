@@ -7,6 +7,11 @@ import symbolTable.Class;
 public class VarChainCall extends ChainCall {
 
     private String varName;
+    private boolean assignmentLeftSide = false;
+
+    public void setAssignmentLeftSide(){
+        assignmentLeftSide = true;
+    }
 
     public VarChainCall(String varName,int lineNumber) {
         this.varName = varName;

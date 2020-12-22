@@ -51,4 +51,35 @@ public class AccessConstructorNode extends PrimaryNode {
     public String getLexemeOfRepresentation() {
         return className;
     }
+
+    @Override
+    public void generate() {
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        symbolTable.genInstruction("RMEM 1");
+        symbolTable.genInstruction("PUSH "+symbolTable.getClass(className).getMyAtributes().values().size()+1);
+        symbolTable.genInstruction("PUSH simple_malloc");
+        symbolTable.genInstruction("CALL");
+        symbolTable.genInstruction("DUP");
+
+        if(symbolTable.getClass(className).atLeastExistADynamicMethod()){
+            symbolTable.genInstruction("PUSH VT_"+className);
+            symbolTable.genInstruction("STOREREF 0");
+            symbolTable.genInstruction("DUP");
+        }
+
+        generateParam();
+
+        symbolTable.genInstruction("PUSH "+className);
+        symbolTable.genInstruction("CALL");
+
+    }
+
+    private void generateParam(){
+        int index = args.size()-1;
+        while(index >= 0){
+            args.get(index).generate();
+            SymbolTable.getInstance().genInstruction("SWAP");
+            index--;
+        }
+    }
 }

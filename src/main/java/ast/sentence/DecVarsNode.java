@@ -33,6 +33,6 @@ public class DecVarsNode extends SentenceNode {
 
     @Override
     public void generate() {
-
+        SymbolTable.getInstance().genInstruction("RMEM "+vars.size());
     }
 }

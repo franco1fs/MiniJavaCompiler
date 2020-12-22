@@ -11,6 +11,7 @@ public class AccessStaticNode extends PrimaryNode {
     //private ArrayList<Expression> args = new ArrayList<Expression>();
     private String idClass;
     private AccessMethodNode accessMethodNode;
+    private Method methodWhoWhereCalled;
 
     public AccessStaticNode(String idClass, AccessMethodNode accessMethodNode,int lineNumber) {
         this.idClass = idClass;
@@ -34,6 +35,7 @@ public class AccessStaticNode extends PrimaryNode {
 
             }
             else{
+                this.methodWhoWhereCalled = methodWhoWhereCalled;
                 if(methodWhoWhereCalled.getMethodForm().equals("static")){
                     ArrayList<Parameter> parameters = methodWhoWhereCalled.getParameters();
                     ArrayList<ExpressionNode> args = accessMethodNode.getArgs();
@@ -67,5 +69,24 @@ public class AccessStaticNode extends PrimaryNode {
     @Override
     public String getLexemeOfRepresentation() {
         return idClass;
+    }
+
+    @Override
+    public void generate() {
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        if(!methodWhoWhereCalled.getReturnType().getTypeName().equals("void")){
+            symbolTable.genInstruction("RMEM 1");
+        }
+        ArrayList<ExpressionNode> args = accessMethodNode.getArgs();
+
+        int index = args.size()-1;
+
+        while (index>=0){
+            args.get(index).generate();
+            index--;
+        }
+
+        symbolTable.genInstruction("PUSH "+idClass+"_"+methodWhoWhereCalled.getName());
+        symbolTable.genInstruction("CALL");
     }
 }

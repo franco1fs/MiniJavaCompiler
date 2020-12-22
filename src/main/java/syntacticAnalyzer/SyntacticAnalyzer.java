@@ -816,12 +816,14 @@ public class SyntacticAnalyzer {
             return new LiteralNode(new Tnull("null",currentToken.getLineNumber()),"null");
         }
         else if(Objects.equals("pr_true", currentToken.getName())){
+            String val = currentToken.getLexeme();
             match("pr_true");
-            return new LiteralNode( new Tboolean("boolean",currentToken.getLineNumber()),currentToken.getLexeme());
+            return new LiteralNode( new Tboolean("boolean",currentToken.getLineNumber()),val);
         }
         else if(Objects.equals("pr_false", currentToken.getName())){
+            String val = currentToken.getLexeme();
             match("pr_false");
-            return new LiteralNode( new Tboolean("boolean",currentToken.getLineNumber()),currentToken.getLexeme());
+            return new LiteralNode( new Tboolean("boolean",currentToken.getLineNumber()),val);
         }
         else if(Objects.equals("Literal int", currentToken.getName())){
             String val = currentToken.getLexeme();

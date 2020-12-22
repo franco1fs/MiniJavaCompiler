@@ -46,7 +46,7 @@ public class Constructor extends Unit{
         symbolTable.genInstruction("LOAD 3");
         symbolTable.genInstruction("STORE "+( 3 + parameters.size() + 1));
         symbolTable.genInstruction("STOREFP");
-        symbolTable.genInstruction("RET "+parameters.size()+1);
+        symbolTable.genInstruction("RET "+(parameters.size()+1));
     }
 
 

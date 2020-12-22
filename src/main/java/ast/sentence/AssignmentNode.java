@@ -30,6 +30,7 @@ public class AssignmentNode extends SentenceNode {
             if(leftAccessNode.getPrimaryNode() instanceof AccessVarNode) {
                 LocalVar localVar = blockWhereIBelong.getParameterOrLocalVarIfExist
                         (leftAccessNode.getPrimaryNode().getLexemeOfRepresentation());
+                ((AccessVarNode) leftAccessNode.getPrimaryNode()).setAssignmentLeftSide();
                 if (localVar == null) {
                     Class classWhereIBelong = (Class) blockWhereIBelong.getUnitWhereIBelong().getMyModule();
                     Attribute attribute = classWhereIBelong.getAttributeIfExist
@@ -61,6 +62,7 @@ public class AssignmentNode extends SentenceNode {
             ChainCall lastElement = leftAccessNode.getChainCallContainer().getChainCallArrayList().get(indexOfLastElementOfCall);
             if(lastElement instanceof VarChainCall){
                 typeOfAccess = leftAccessNode.check();
+                ((VarChainCall) lastElement).setAssignmentLeftSide();
             }
             else{
                 throw new SemanticErrorException(leftAccessNode.getChainCallContainer().getChainCallArrayList().

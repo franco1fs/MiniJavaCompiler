@@ -332,9 +332,11 @@ public class Class extends Module{
 
         constructor.generate();
 
-        for(Method method: myMethods.values()){
-           method.generate();
+        if(!name.equals("System")) {
+            for (Method method : myMethods.values()) {
+                method.generate();
+            }
         }
-
     }
+
 }

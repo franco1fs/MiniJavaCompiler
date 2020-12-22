@@ -109,6 +109,8 @@ public class BlockNode extends SentenceNode {
 
     @Override
     public void generate() {
-
+        for(SentenceNode sentenceNode: sentences){
+            sentenceNode.generate();
+        }
     }
 }

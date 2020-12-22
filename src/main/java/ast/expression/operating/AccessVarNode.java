@@ -7,6 +7,10 @@ import symbolTable.Class;
 public class AccessVarNode extends PrimaryNode {
     private String varName;
     private BlockNode blockWhereBeingUsed;
+    private boolean assignmentLeftSide = false;
+    private boolean isAnInstanceAttr = false;
+    private int offsetOfTheVar ;
+
 
 
     public AccessVarNode(String varName,int lineNumber,BlockNode blockNode) {
@@ -15,10 +19,15 @@ public class AccessVarNode extends PrimaryNode {
         this.blockWhereBeingUsed = blockNode;
     }
 
+    public void setAssignmentLeftSide(){
+        assignmentLeftSide = true;
+    }
+
 
     public MethodType check() throws SemanticErrorException {
         LocalVar localVar = blockWhereBeingUsed.getParameterOrLocalVarIfExist(varName);
         if(localVar!=null){
+            offsetOfTheVar = localVar.getOffset();
             return localVar.getType();
         }
         else{
@@ -37,6 +46,8 @@ public class AccessVarNode extends PrimaryNode {
                     }
                 }
                 if(isAccessibleAttributeFromHere(attribute,myClass)){
+                    offsetOfTheVar = attribute.getOffsetCir();
+                    isAnInstanceAttr = true;
                     return attribute.getType();
                 }
                 else{
@@ -54,8 +65,25 @@ public class AccessVarNode extends PrimaryNode {
 
     @Override
     public void generate() {
-
-
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        if(isAnInstanceAttr){
+            symbolTable.genInstruction("LOAD 3");
+            if(!assignmentLeftSide || hasChained){
+                symbolTable.genInstruction("LOADREF "+offsetOfTheVar);
+            }
+            else{
+                symbolTable.genInstruction("SWAP");
+                symbolTable.genInstruction("STOREREF "+offsetOfTheVar);
+            }
+        }
+        else{
+            if(!assignmentLeftSide || hasChained){
+                symbolTable.genInstruction("LOAD "+offsetOfTheVar);
+            }
+            else{
+                symbolTable.genInstruction("STORE "+offsetOfTheVar);
+            }
+        }
     }
 
     private boolean isAccessibleAttributeFromHere(Attribute attribute,Class myClass){

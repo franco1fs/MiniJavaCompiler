@@ -360,7 +360,7 @@ public class SymbolTable {
 
         public void generateCode(){
             for(Class classe : classes.values()){
-                classe.generate();
+                    classe.generate();
             }
         }
 }

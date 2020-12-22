@@ -24,4 +24,9 @@ public class AccessThisNode extends PrimaryNode {
     public String getLexemeOfRepresentation() {
         return "this";
     }
+
+    @Override
+    public void generate() {
+        SymbolTable.getInstance().genInstruction("LOAD 3");
+    }
 }

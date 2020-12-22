@@ -3,6 +3,7 @@ package symbolTable;
 
 
 import ast.expression.ExpressionNode;
+import ast.sentence.BlockNode;
 
 import java.util.ArrayList;
 
@@ -99,9 +100,9 @@ public class Method extends Unit{
         symbolTable.genInstruction("LOADSP");
         symbolTable.genInstruction("STOREFP");
 
-        if(getMyBlock()!=null){
-            getMyBlock().generate();
-        }
+        BlockNode blockNode = getMyBlock();
+
+        blockNode.generate();
 
 
         if(name.equals("main")){
@@ -114,7 +115,7 @@ public class Method extends Unit{
 
         else{
             symbolTable.genInstruction("STOREFP");
-            symbolTable.genInstruction("RET "+parameters.size()+1);
+            symbolTable.genInstruction("RET "+(parameters.size()+1));
         }
     }
 

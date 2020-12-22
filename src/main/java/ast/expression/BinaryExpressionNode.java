@@ -1,9 +1,6 @@
 package ast.expression;
 
-import symbolTable.Method;
-import symbolTable.MethodType;
-import symbolTable.SemanticErrorException;
-import symbolTable.Tboolean;
+import symbolTable.*;
 
 public class BinaryExpressionNode extends ExpressionNode {
 
@@ -66,6 +63,50 @@ public class BinaryExpressionNode extends ExpressionNode {
 
     @Override
     public void generate() {
+        leftSide.generate();
+        rightSide.generate();
+        SymbolTable symbolTable = SymbolTable.getInstance();
 
+        switch (binaryOperator){
+            case "+":
+                symbolTable.genInstruction("ADD");
+                break;
+            case "-":
+                symbolTable.genInstruction("SUB");
+                break;
+            case "*":
+                symbolTable.genInstruction("MUL");
+                break;
+            case "/":
+                symbolTable.genInstruction("DIV");
+                break;
+            case "%":
+                symbolTable.genInstruction("MOD");
+                break;
+            case "&&":
+                symbolTable.genInstruction("AND");
+                break;
+            case "||":
+                symbolTable.genInstruction("OR");
+                break;
+            case "==":
+                symbolTable.genInstruction("EQ");
+                break;
+            case "!=":
+                symbolTable.genInstruction("NE");
+                break;
+            case "<":
+                symbolTable.genInstruction("LT");
+                break;
+            case ">":
+                symbolTable.genInstruction("GT");
+                break;
+            case "<=":
+                symbolTable.genInstruction("LE");
+                break;
+            case ">=" :
+                symbolTable.genInstruction("GE");
+                break;
+        }
     }
 }

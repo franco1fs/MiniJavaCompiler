@@ -10,6 +10,10 @@ public class AccessNode extends OperantNode {
     public AccessNode(PrimaryNode primaryNode, ChainCallContainer chainCallContainer) {
         this.primaryNode = primaryNode;
         this.chainCallContainer = chainCallContainer;
+
+        if(chainCallContainer.getChainCallArrayList().size()>0){
+            primaryNode.setHasChained();
+        }
     }
 
     public PrimaryNode getPrimaryNode() {
@@ -28,6 +32,6 @@ public class AccessNode extends OperantNode {
 
     @Override
     public void generate() {
-
+        primaryNode.generate();
     }
 }

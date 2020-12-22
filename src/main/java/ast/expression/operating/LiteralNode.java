@@ -21,6 +21,7 @@ public class LiteralNode extends OperantNode {
     @Override
     public void generate() {
         SymbolTable symbolTable = SymbolTable.getInstance();
+        System.out.println(value);
         switch (type.getTypeName()){
             case "boolean":
                 if(value.equals("true")){
@@ -34,12 +35,12 @@ public class LiteralNode extends OperantNode {
                 symbolTable.genInstruction("PUSH 0");
                 break;
             case "int":
-                symbolTable.genInstruction(value);
+                symbolTable.genInstruction("PUSH "+value);
                 break;
             case "char":
                 char letter = '0';
                 if(value.length()>0){
-                    letter = value.charAt(0);
+                    letter = value.charAt(1);
                 }
                 symbolTable.genInstruction("PUSH "+(int) letter);
                 break;

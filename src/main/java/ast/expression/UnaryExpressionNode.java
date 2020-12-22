@@ -41,7 +41,18 @@ public class UnaryExpressionNode extends ExpressionNode {
 
     @Override
     public void generate() {
+        operantNode.generate();
 
-
+        if(unaryOperator!=null){
+            if(unaryOperator.equals("!")){
+                SymbolTable.getInstance().genInstruction("NOT");
+            }
+            else if(unaryOperator.equals("-")){
+                SymbolTable.getInstance().genInstruction("NEG");
+            }
+            else{
+                //Que va para suma unaria?
+            }
+        }
     }
 }

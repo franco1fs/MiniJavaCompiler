@@ -40,6 +40,6 @@ public class CallNode extends SentenceNode {
 
     @Override
     public void generate() {
-
+        accessNode.generate();
     }
 }
