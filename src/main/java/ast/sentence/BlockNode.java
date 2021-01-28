@@ -1,9 +1,6 @@
 package ast.sentence;
 
-import symbolTable.LocalVar;
-import symbolTable.Parameter;
-import symbolTable.SemanticErrorException;
-import symbolTable.Unit;
+import symbolTable.*;
 
 import java.util.ArrayList;
 
@@ -30,7 +27,7 @@ public class BlockNode extends SentenceNode {
     private void convertAndAddParametersToLocalVars(){
         ArrayList<Parameter> parameters = unitWhereIBelong.getParameters();
         for(Parameter parameter: parameters){
-            localVars.add(new LocalVar(parameter.getType(),parameter.getName(),lineNumber));
+            localVars.add(new LocalVar(parameter.getType(),parameter.getName(),lineNumber,parameter.getOffset()));
         }
     }
 
@@ -109,8 +106,18 @@ public class BlockNode extends SentenceNode {
 
     @Override
     public void generate() {
+        SymbolTable symbolTable = SymbolTable.getInstance();
         for(SentenceNode sentenceNode: sentences){
             sentenceNode.generate();
+        }
+
+        if(fatherBlock!=null){
+           symbolTable.genInstruction("FMEM "+(localVars.size()-fatherBlock.getLocalVars().size()));
+           System.out.println("LIBERO :"+(localVars.size()-fatherBlock.getLocalVars().size()));
+        }
+        else{
+            symbolTable.genInstruction("FMEM "+(localVars.size()-unitWhereIBelong.getParameters().size()));
+            System.out.println("LIBERO :"+(localVars.size()-unitWhereIBelong.getParameters().size()));
         }
     }
 }

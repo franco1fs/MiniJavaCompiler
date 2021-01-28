@@ -29,6 +29,10 @@ public class ChainCallContainer {
                 for(ChainCall chainCall: chainCallArrayList){
                     toRet = chainCall.check(toRet);
                 }
+                if(chainCallArrayList.get(chainCallArrayList.size()-1) instanceof VarChainCall){
+                    ((VarChainCall) chainCallArrayList.get(chainCallArrayList.size()-1)).setAtTheEndTrue();
+                }
+
                 return toRet;
             }
         }
@@ -40,5 +44,12 @@ public class ChainCallContainer {
 
     public Module getTheModuleWhereCallOccur() {
         return theModuleWhereCallOccur;
+    }
+
+    public void generate(){
+        //System.out.println("ESTOY EN EL CHAINCALLCONTAINER");
+        for(ChainCall chainCall: chainCallArrayList){
+            chainCall.generate();
+        }
     }
 }

@@ -82,6 +82,8 @@ public class AccessMethodNode extends PrimaryNode {
 
     @Override
     public void generate() {
+        System.out.println("ESTOY EN AccessMethodNode"+this.toString());
+
         SymbolTable symbolTable = SymbolTable.getInstance();
         if(methodWhoWasCalled.getMethodForm().equals("static")){
             if(!methodWhoWasCalled.getReturnType().equals("void")){
@@ -99,7 +101,7 @@ public class AccessMethodNode extends PrimaryNode {
             generateParamForDynamicMethod();
             symbolTable.genInstruction("DUP");
             symbolTable.genInstruction("LOADREF 0");
-            symbolTable.genInstruction("LOADREF "+methodWhoWasCalled.getOffsetVt());
+            symbolTable.genInstruction("LOADREF "+methodWhoWasCalled.getOffsetVt()+1);
         }
         symbolTable.genInstruction("CALL");
     }

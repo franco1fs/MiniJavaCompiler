@@ -3,6 +3,7 @@ package ast.sentence;
 import ast.expression.ExpressionNode;
 import symbolTable.MethodType;
 import symbolTable.SemanticErrorException;
+import symbolTable.SymbolTable;
 
 public class WhileNode extends SentenceNode {
     private ExpressionNode expressionNode;
@@ -30,6 +31,18 @@ public class WhileNode extends SentenceNode {
 
     @Override
     public void generate() {
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        String whileStartLabel = symbolTable.getLabel();
+        String whileEndLabel = symbolTable.getLabel();
 
+        symbolTable.genInstruction(whileStartLabel+": NOP");
+
+        expressionNode.generate();
+        symbolTable.genInstruction("BF "+whileEndLabel);
+
+        sentenceNode.generate();
+
+        symbolTable.genInstruction("JUMP "+whileStartLabel);
+        symbolTable.genInstruction(whileEndLabel+": NOP");
     }
 }

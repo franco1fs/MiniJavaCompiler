@@ -67,20 +67,25 @@ public class AccessVarNode extends PrimaryNode {
     public void generate() {
         SymbolTable symbolTable = SymbolTable.getInstance();
         if(isAnInstanceAttr){
+            System.out.println("Es inst attr "+varName);
             symbolTable.genInstruction("LOAD 3");
             if(!assignmentLeftSide || hasChained){
+                System.out.println(offsetOfTheVar+" "+varName+" LOAD OR HASCHAINED");
                 symbolTable.genInstruction("LOADREF "+offsetOfTheVar);
             }
             else{
+                System.out.println(offsetOfTheVar+" "+varName+" STOREREF");
                 symbolTable.genInstruction("SWAP");
                 symbolTable.genInstruction("STOREREF "+offsetOfTheVar);
             }
         }
         else{
             if(!assignmentLeftSide || hasChained){
+                System.out.println(offsetOfTheVar+" "+varName+" LOAD");
                 symbolTable.genInstruction("LOAD "+offsetOfTheVar);
             }
             else{
+                System.out.println(offsetOfTheVar+" "+varName+" Store");
                 symbolTable.genInstruction("STORE "+offsetOfTheVar);
             }
         }

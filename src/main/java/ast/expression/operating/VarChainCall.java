@@ -8,6 +8,12 @@ public class VarChainCall extends ChainCall {
 
     private String varName;
     private boolean assignmentLeftSide = false;
+    private Attribute meAsAttribute;
+    private boolean atTheEnd = false;
+
+    public void setAtTheEndTrue(){
+        atTheEnd = true;
+    }
 
     public void setAssignmentLeftSide(){
         assignmentLeftSide = true;
@@ -42,14 +48,47 @@ public class VarChainCall extends ChainCall {
                             ""+clase.getName());
                 }
                 else{
+                    meAsAttribute = attributeWhatIAmLookingFor;
                     return attributeWhatIAmLookingFor.getType();
                 }
             }
         }
     }
+    public Attribute getMeAsAttribute(){
+        return  meAsAttribute;
+    }
 
     @Override
     public String getLexemeOfRepresentation() {
         return varName;
+    }
+
+    @Override
+    public void generate() {
+        SymbolTable symbolTable = SymbolTable.getInstance();
+
+       // symbolTable.genInstruction("LOADREF "+meAsAttribute.getOffsetCir());
+
+        /*
+        if(atTheEnd){
+            symbolTable.genInstruction("SWAP");
+            System.out.println("OFFSET "+meAsAttribute.getOffsetCir()+" Nombre"+ meAsAttribute.getName());
+            symbolTable.genInstruction("STOREREF "+meAsAttribute.getOffsetCir());
+        }
+        else{
+            symbolTable.genInstruction("LOADREF "+meAsAttribute.getOffsetCir());
+        }
+*/
+        if(assignmentLeftSide){
+            symbolTable.genInstruction("SWAP");
+            System.out.println("OFFSET "+meAsAttribute.getOffsetCir()+" Nombre"+ meAsAttribute.getName());
+            symbolTable.genInstruction("STOREREF "+meAsAttribute.getOffsetCir());
+
+        }
+        else{
+            symbolTable.genInstruction("LOADREF "+meAsAttribute.getOffsetCir());
+
+        }
+
     }
 }

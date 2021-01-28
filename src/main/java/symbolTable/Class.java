@@ -316,15 +316,24 @@ public class Class extends Module{
     }
 
     private void createVTandLabels(){
+        StringBuilder string = new StringBuilder();
         if(atLeastExistADynamicMethod()){
             symbolTable.genInstruction(".DATA");
-            symbolTable.genInstruction("VT_"+name+":");
+            //symbolTable.genInstruction("VT_"+name+":");
+            string.append("VT_"+name+": DW ");
         }
+
         for(Method method: myMethods.values()){
             if(method.getMethodForm().equals("dynamic")){
-                symbolTable.genInstruction("DW "+method.getName());
+                //symbolTable.genInstruction("DW "+method.getName()+"_"+name);
+                string.append(method.getName()+"_"+name+", ");
             }
         }
+        if(string.length()>0){
+            string.delete(string.length() -2, string.length());
+            symbolTable.genInstruction(string.toString());
+        }
+
     }
 
     public void generate(){

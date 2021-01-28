@@ -54,6 +54,8 @@ public class AccessConstructorNode extends PrimaryNode {
 
     @Override
     public void generate() {
+        System.out.println("ESTOY EN ACCESO A CONSTRUCTOR");
+
         SymbolTable symbolTable = SymbolTable.getInstance();
         symbolTable.genInstruction("RMEM 1");
         symbolTable.genInstruction("PUSH "+symbolTable.getClass(className).getMyAtributes().values().size()+1);
@@ -68,6 +70,7 @@ public class AccessConstructorNode extends PrimaryNode {
         }
 
         generateParam();
+
 
         symbolTable.genInstruction("PUSH "+className);
         symbolTable.genInstruction("CALL");

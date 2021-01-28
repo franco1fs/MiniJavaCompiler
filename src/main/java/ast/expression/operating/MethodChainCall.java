@@ -10,6 +10,7 @@ public class MethodChainCall extends ChainCall {
 
     private ArrayList<ExpressionNode> args = new ArrayList<ExpressionNode>();
     private String methodName;
+    private Method meAsMethod;
 
     public MethodChainCall(ArrayList<ExpressionNode> args, String methodName, int lineNumber) {
         this.args = args;
@@ -42,6 +43,7 @@ public class MethodChainCall extends ChainCall {
                                     methodName);
                         }
                     }
+                    meAsMethod = method;
                     return method.getReturnType();
                 }
                 else{
@@ -53,8 +55,51 @@ public class MethodChainCall extends ChainCall {
         }
     }
 
+    public Method getMeAsMethod(){
+        return meAsMethod;
+    }
     @Override
     public String getLexemeOfRepresentation() {
         return methodName;
+    }
+
+    @Override
+    public void generate() {
+
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        if(meAsMethod.getMethodForm().equals("static")){
+            symbolTable.genInstruction("POP");
+
+            if(!meAsMethod.getReturnType().getTypeName().equals("void")){
+                symbolTable.genInstruction("RMEM 1");
+            }
+
+            for(int index = args.size()-1; index>=0 ; index--){
+                args.get(index).generate();
+            }
+
+            symbolTable.genInstruction("PUSH "+meAsMethod.getName());
+            symbolTable.genInstruction("CALL");
+        }
+        else{
+
+            if(!meAsMethod.getReturnType().getTypeName().equals("void")){
+                symbolTable.genInstruction("RMEM 1");
+                symbolTable.genInstruction("SWAP");
+            }
+
+            for(int index2 = args.size()-1; index2>=0 ; index2--){
+                args.get(index2).generate();
+                symbolTable.genInstruction("SWAP");
+            }
+
+            System.out.println("ESTOY EN METHODCHAINCALL DYNAMIC"+meAsMethod.getOffsetVt());
+            symbolTable.genInstruction("DUP");
+            symbolTable.genInstruction("LOADREF 0");
+            symbolTable.genInstruction("LOADREF "+meAsMethod.getOffsetVt());
+            symbolTable.genInstruction("CALL");
+
+
+        }
     }
 }

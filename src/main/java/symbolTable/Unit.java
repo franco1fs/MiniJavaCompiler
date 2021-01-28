@@ -8,6 +8,7 @@ public class Unit extends Entity {
     protected Module myModule;
     protected ArrayList<Parameter> parameters = new ArrayList<Parameter>();
     private BlockNode myBlock;
+    private int offsetParam = 0;
 
 
     public void setMyBlock(BlockNode myBlock) {
@@ -30,11 +31,12 @@ public class Unit extends Entity {
                     "parametro repetido en la unidad "+ name );
         }
         if(this instanceof Constructor || (this instanceof Method && ((Method) this).getMethodForm().equals("dynamic"))){
-            parameter.setOffset(parameters.size()+4);
+            parameter.setOffset(offsetParam+4);
         }
         else{
-            parameter.setOffset(parameters.size()+3);
+            parameter.setOffset(offsetParam+3);
         }
+        offsetParam++;
 
         parameters.add(parameter);
     }

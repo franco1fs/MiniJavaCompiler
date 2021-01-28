@@ -74,6 +74,30 @@ public class ReturnNode extends SentenceNode {
 
     @Override
     public void generate() {
+        Method method = (Method) unitWhereBelong;
+        int offset;
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        if(returnExpression!=null){
+            returnExpression.generate();
+            offset = method.getParameters().size()+3;
+
+            if(method.getMethodForm().equals("dynamic")){
+                offset++;
+            }
+
+            symbolTable.genInstruction("STORE "+offset);
+        }
+
+        symbolTable.genInstruction("FMEM "+method.getMyBlock().getLocalVars().size());
+        symbolTable.genInstruction("STOREFP ");
+
+
+        if(method.getMethodForm().equals("static")){
+            symbolTable.genInstruction("RET "+method.getParameters().size());
+        }
+        else
+            symbolTable.genInstruction("RET "+method.getParameters().size()+1);
 
     }
+
 }

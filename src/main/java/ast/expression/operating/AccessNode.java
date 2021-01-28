@@ -32,6 +32,10 @@ public class AccessNode extends OperantNode {
 
     @Override
     public void generate() {
+        if(chainCallContainer.getChainCallArrayList().size()>0){
+            primaryNode.setHasChained();
+        }
         primaryNode.generate();
+        chainCallContainer.generate();
     }
 }

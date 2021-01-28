@@ -30,6 +30,7 @@ public class Constructor extends Unit{
     }
 
     public void generate(){
+
         SymbolTable symbolTable = SymbolTable.getInstance();
         symbolTable.genInstruction(".CODE");
         symbolTable.genInstruction(name+":");
@@ -47,6 +48,9 @@ public class Constructor extends Unit{
         symbolTable.genInstruction("STORE "+( 3 + parameters.size() + 1));
         symbolTable.genInstruction("STOREFP");
         symbolTable.genInstruction("RET "+(parameters.size()+1));
+
+
+
     }
 
 

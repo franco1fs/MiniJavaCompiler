@@ -3,6 +3,7 @@ package ast.sentence;
 import ast.expression.ExpressionNode;
 import symbolTable.MethodType;
 import symbolTable.SemanticErrorException;
+import symbolTable.SymbolTable;
 
 public class IfElseNode extends SentenceNode {
 
@@ -36,6 +37,22 @@ public class IfElseNode extends SentenceNode {
 
     @Override
     public void generate() {
+        SymbolTable symbolTable = SymbolTable.getInstance();
+        expressionNode.generate();
+        String l1 = symbolTable.getLabel();
+        symbolTable.genInstruction("BF "+l1);
 
+        ifSentence.generate();
+
+        if(elseSentence==null){
+            symbolTable.genInstruction(l1+": NOP");
+        }
+        else{
+            String l2 = symbolTable.getLabel();
+            symbolTable.genInstruction("JUMP "+l2);
+            symbolTable.genInstruction(l1+": NOP");
+            elseSentence.generate();
+            symbolTable.genInstruction(l2+": NOP");
+        }
     }
 }

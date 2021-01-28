@@ -10,4 +10,6 @@ public abstract class ChainCall {
     public abstract MethodType check(MethodType type) throws SemanticErrorException;
 
     public abstract String getLexemeOfRepresentation();
+
+    public abstract void generate();
 }
