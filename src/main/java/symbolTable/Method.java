@@ -14,6 +14,8 @@ public class Method extends Unit{
     //private enum methodForm = {"static", "dynamic"};
     private int offsetVt = -1;
 
+    private boolean codeAlreadyGenerated = false;
+
 
     public Method(String name, Module myModule, MethodType returnType, ArrayList<Parameter> parameters, int lineNumber) {
         this.name = name;
@@ -87,7 +89,11 @@ public class Method extends Unit{
         return answer;
     }
 
+    public boolean isCodeAlreadyGenerated(){
+        return codeAlreadyGenerated;
+    }
     public void generate(){
+        codeAlreadyGenerated = true;
         SymbolTable symbolTable = SymbolTable.getInstance();
         symbolTable.genInstruction(".CODE");
         if(name.equals("main")){

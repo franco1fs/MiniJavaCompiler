@@ -253,6 +253,8 @@ public class Class extends Module{
             setMethodsOffset(greaterOffsetVt);
             int greaterOffsetCir = getGreaterOffsetCir();
             setAttributesOffset(greaterOffsetCir);
+
+            System.out.println("CLASE::"+name+" greater offsetVT:"+greaterOffsetVt+" greaterOffCir "+ greaterOffsetCir);
         }
     }
 
@@ -316,6 +318,7 @@ public class Class extends Module{
     }
 
     private void createVTandLabels(){
+        consolidateOffsets();
         StringBuilder string = new StringBuilder();
         if(atLeastExistADynamicMethod()){
             symbolTable.genInstruction(".DATA");
@@ -323,10 +326,13 @@ public class Class extends Module{
             string.append("VT_"+name+": DW ");
         }
 
-        for(Method method: myMethods.values()){
+        ArrayList<Method> myMethodsByOrder = orderMethodsByOffset(myMethods.values());
+
+
+        for(Method method: myMethodsByOrder){
             if(method.getMethodForm().equals("dynamic")){
                 //symbolTable.genInstruction("DW "+method.getName()+"_"+name);
-                string.append(method.getName()+"_"+name+", ");
+                string.append(method.getName()+"_"+method.getMyModule().getName()+", ");
             }
         }
         if(string.length()>0){
@@ -336,6 +342,27 @@ public class Class extends Module{
 
     }
 
+    private ArrayList<Method> orderMethodsByOffset(Collection<Method> myMethods){
+        int offset = 0;
+        ArrayList<Method> toRet = new ArrayList<Method>();
+        int initIndex = 0 , endIndex = myMethods.size();
+        while(initIndex<endIndex){
+            Method methodAux = null;
+            for(Method method: myMethods){
+                if(method.getOffsetVt() == offset){
+                    methodAux = method;
+                    toRet.add(method);
+                    offset++;
+                    initIndex++;
+                    break;
+                }
+            }
+            //myMethods.remove(methodAux);
+        }
+        return toRet;
+    }
+
+
     public void generate(){
         createVTandLabels();
 
@@ -343,7 +370,8 @@ public class Class extends Module{
 
         if(!name.equals("System")) {
             for (Method method : myMethods.values()) {
-                method.generate();
+                if(!method.isCodeAlreadyGenerated())
+                    method.generate();
             }
         }
     }
