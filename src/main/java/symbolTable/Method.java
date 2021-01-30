@@ -16,6 +16,8 @@ public class Method extends Unit{
 
     private boolean codeAlreadyGenerated = false;
 
+    private boolean isAOverwriteMethod = false;
+
 
     public Method(String name, Module myModule, MethodType returnType, ArrayList<Parameter> parameters, int lineNumber) {
         this.name = name;
@@ -35,6 +37,14 @@ public class Method extends Unit{
     }
     public int getOffsetVt(){
         return offsetVt;
+    }
+
+    public void setIsAOverwriteMethod(){
+        isAOverwriteMethod = true;
+    }
+
+    public boolean getIsOverwriteMethod(){
+        return  isAOverwriteMethod;
     }
 
     public void setOffsetVt(int offsetVt){

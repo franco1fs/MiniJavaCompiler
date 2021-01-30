@@ -25,6 +25,8 @@ public class Class extends Module{
 
     private boolean areOffsetsConsolidate = false;
 
+    private ArrayList<Method> inheritMethods = new ArrayList<Method>();
+
     public Class(String name,int lineNumber){
         this.name = name;
         this.lineNumber = lineNumber;
@@ -220,6 +222,9 @@ public class Class extends Module{
                             myMethods.get(method.getName()).getLineNumber()+" el metodo "+ myMethods.get(method.getName()).getName()+
                             " tiene el mismo nombre que en una clase Super sin poder SobreEscribirlo");
                 }
+                else{
+                    myMethods.get(method.getName()).setIsAOverwriteMethod();
+                }
             }
             else {
                 myMethods.put(method.getName(),method);
@@ -234,6 +239,7 @@ public class Class extends Module{
         while (ancestor != null){
             inheritanceMethods = symbolTable.getClasses().get(ancestor).getMyMethods().values();
             methods.addAll(inheritanceMethods);
+            inheritMethods.addAll(inheritanceMethods);
             ancestor = symbolTable.getClasses().get(ancestor).getAncestor();
         }
         return methods;
@@ -272,11 +278,26 @@ public class Class extends Module{
     private void setMethodsOffset(int greaterOff){
         greaterOff = greaterOff +1 ;
 
-
         for(String name : orderOfMethods){
-            myMethods.get(name).setOffsetVt(greaterOff);
-            greaterOff = greaterOff + 1;
+            if(!myMethods.get(name).getIsOverwriteMethod()){
+                myMethods.get(name).setOffsetVt(greaterOff);
+                greaterOff = greaterOff + 1;
+            }
+            else{
+                int off = findMethodOffset(name);
+                myMethods.get(name).setOffsetVt(off);
+            }
         }
+    }
+
+    private int findMethodOffset(String methodName){
+        int answer=0;
+        for(Method method: inheritMethods){
+            if(method.getName().equals(methodName)){
+                answer = method.getOffsetVt();
+            }
+        }
+        return answer;
     }
 
     private int getGreaterOffsetCir(){
@@ -333,6 +354,7 @@ public class Class extends Module{
             if(method.getMethodForm().equals("dynamic")){
                 //symbolTable.genInstruction("DW "+method.getName()+"_"+name);
                 string.append(method.getName()+"_"+method.getMyModule().getName()+", ");
+                System.out.println("Metodo: "+method.getName()+" offset: "+method.getOffsetVt()+" clase: "+method.getMyModule().getName());
             }
         }
         if(string.length()>0){
