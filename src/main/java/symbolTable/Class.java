@@ -236,11 +236,19 @@ public class Class extends Module{
         Collection<Method> methods = new ArrayList<Method>();
         SymbolTable symbolTable = SymbolTable.getInstance();
         Collection<Method> inheritanceMethods;
+        /*
         while (ancestor != null){
             inheritanceMethods = symbolTable.getClasses().get(ancestor).getMyMethods().values();
             methods.addAll(inheritanceMethods);
             inheritMethods.addAll(inheritanceMethods);
             ancestor = symbolTable.getClasses().get(ancestor).getAncestor();
+        }
+        */
+
+        if(ancestor!=null){
+            inheritanceMethods = symbolTable.getClasses().get(ancestor).getMyMethods().values();
+            methods.addAll(inheritanceMethods);
+            inheritMethods.addAll(inheritanceMethods);
         }
         return methods;
     }
@@ -292,9 +300,11 @@ public class Class extends Module{
 
     private int findMethodOffset(String methodName){
         int answer=0;
+        System.out.println("La cant Met en inheritMethods es:: "+inheritMethods.size()+" en "+name);
         for(Method method: inheritMethods){
             if(method.getName().equals(methodName)){
                 answer = method.getOffsetVt();
+                break;
             }
         }
         return answer;

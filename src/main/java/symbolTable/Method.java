@@ -110,7 +110,13 @@ public class Method extends Unit{
             symbolTable.genInstruction("main:");
         }
         else{
-            symbolTable.genInstruction(name+"_"+myModule.getName()+":");
+            if(methodForm.equals("dynamic")){
+                symbolTable.genInstruction(name+"_"+myModule.getName()+":");
+            }
+            else{
+                symbolTable.genInstruction(myModule.getName()+"_"+name+":");
+            }
+
         }
         symbolTable.genInstruction("LOADFP");
         symbolTable.genInstruction("LOADSP");

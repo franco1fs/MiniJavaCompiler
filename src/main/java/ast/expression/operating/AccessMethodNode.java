@@ -91,6 +91,7 @@ public class AccessMethodNode extends PrimaryNode {
             }
             generateParamForStaticMethod();
             symbolTable.genInstruction("PUSH "+methodWhoWasCalled.getName());
+            System.out.println("El metodo que llame tiene nombre: "+methodWhoWasCalled.getName());
         }
         else{
             symbolTable.genInstruction("LOAD 3");
