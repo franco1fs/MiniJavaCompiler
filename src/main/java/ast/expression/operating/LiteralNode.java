@@ -21,7 +21,7 @@ public class LiteralNode extends OperantNode {
     @Override
     public void generate() {
         SymbolTable symbolTable = SymbolTable.getInstance();
-        System.out.println(value);
+        //System.out.println(value);
         switch (type.getTypeName()){
             case "boolean":
                 if(value.equals("true")){

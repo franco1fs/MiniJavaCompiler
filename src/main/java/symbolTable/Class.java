@@ -268,7 +268,7 @@ public class Class extends Module{
             int greaterOffsetCir = getGreaterOffsetCir();
             setAttributesOffset(greaterOffsetCir);
 
-            System.out.println("CLASE::"+name+" greater offsetVT:"+greaterOffsetVt+" greaterOffCir "+ greaterOffsetCir);
+            //System.out.println("CLASE::"+name+" greater offsetVT:"+greaterOffsetVt+" greaterOffCir "+ greaterOffsetCir);
         }
     }
 
@@ -300,7 +300,7 @@ public class Class extends Module{
 
     private int findMethodOffset(String methodName){
         int answer=0;
-        System.out.println("La cant Met en inheritMethods es:: "+inheritMethods.size()+" en "+name);
+      //  System.out.println("La cant Met en inheritMethods es:: "+inheritMethods.size()+" en "+name);
         for(Method method: inheritMethods){
             if(method.getName().equals(methodName)){
                 answer = method.getOffsetVt();
@@ -364,7 +364,7 @@ public class Class extends Module{
             if(method.getMethodForm().equals("dynamic")){
                 //symbolTable.genInstruction("DW "+method.getName()+"_"+name);
                 string.append(method.getName()+"_"+method.getMyModule().getName()+", ");
-                System.out.println("Metodo: "+method.getName()+" offset: "+method.getOffsetVt()+" clase: "+method.getMyModule().getName());
+               //System .out.println("Metodo: "+method.getName()+" offset: "+method.getOffsetVt()+" clase: "+method.getMyModule().getName());
             }
         }
         if(string.length()>0){

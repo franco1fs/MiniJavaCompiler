@@ -67,21 +67,9 @@ public class VarChainCall extends ChainCall {
     public void generate() {
         SymbolTable symbolTable = SymbolTable.getInstance();
 
-       // symbolTable.genInstruction("LOADREF "+meAsAttribute.getOffsetCir());
-
-        /*
-        if(atTheEnd){
-            symbolTable.genInstruction("SWAP");
-            System.out.println("OFFSET "+meAsAttribute.getOffsetCir()+" Nombre"+ meAsAttribute.getName());
-            symbolTable.genInstruction("STOREREF "+meAsAttribute.getOffsetCir());
-        }
-        else{
-            symbolTable.genInstruction("LOADREF "+meAsAttribute.getOffsetCir());
-        }
-*/
         if(assignmentLeftSide){
             symbolTable.genInstruction("SWAP");
-            System.out.println("OFFSET "+meAsAttribute.getOffsetCir()+" Nombre"+ meAsAttribute.getName());
+            //System.out.println("OFFSET "+meAsAttribute.getOffsetCir()+" Nombre"+ meAsAttribute.getName());
             symbolTable.genInstruction("STOREREF "+meAsAttribute.getOffsetCir());
 
         }

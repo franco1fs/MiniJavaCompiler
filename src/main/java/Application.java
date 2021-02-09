@@ -57,7 +57,7 @@ public class Application {
             }
         }
         else{
-            System.out.println("La cantidad de argumentos es INVALIDA, falta agregar la ruta del archivo de entrada");
+            System.out.println("La cantidad de argumentos es INVALIDA");
         }
 
 

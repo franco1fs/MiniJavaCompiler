@@ -113,11 +113,9 @@ public class BlockNode extends SentenceNode {
 
         if(fatherBlock!=null){
            symbolTable.genInstruction("FMEM "+(localVars.size()-fatherBlock.getLocalVars().size()));
-           System.out.println("LIBERO :"+(localVars.size()-fatherBlock.getLocalVars().size()));
         }
         else{
             symbolTable.genInstruction("FMEM "+(localVars.size()-unitWhereIBelong.getParameters().size()));
-            System.out.println("LIBERO :"+(localVars.size()-unitWhereIBelong.getParameters().size()));
         }
     }
 }

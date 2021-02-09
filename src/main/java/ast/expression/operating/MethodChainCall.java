@@ -93,7 +93,6 @@ public class MethodChainCall extends ChainCall {
                 symbolTable.genInstruction("SWAP");
             }
 
-            System.out.println("ESTOY EN METHODCHAINCALL DYNAMIC"+meAsMethod.getOffsetVt());
             symbolTable.genInstruction("DUP");
             symbolTable.genInstruction("LOADREF 0");
             symbolTable.genInstruction("LOADREF "+meAsMethod.getOffsetVt());

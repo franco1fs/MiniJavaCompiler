@@ -82,7 +82,6 @@ public class AccessMethodNode extends PrimaryNode {
 
     @Override
     public void generate() {
-        System.out.println("ESTOY EN AccessMethodNode"+this.toString());
 
         SymbolTable symbolTable = SymbolTable.getInstance();
         if(methodWhoWasCalled.getMethodForm().equals("static")){
@@ -91,7 +90,6 @@ public class AccessMethodNode extends PrimaryNode {
             }
             generateParamForStaticMethod();
             symbolTable.genInstruction("PUSH "+methodWhoWasCalled.getName());
-            System.out.println("El metodo que llame tiene nombre: "+methodWhoWasCalled.getName());
         }
         else{
             symbolTable.genInstruction("LOAD 3");
